@@ -1,7 +1,7 @@
 /**
  * @file main.c
- * @author your name (you@domain.com)
- * @brief Minimal LLVM IRREDUCIBLE Architectural Graph & Entanglement Analyzer
+ * @author Sigull
+ * @brief Minimal (LLVM IR) Architectural Graph & Entanglement Analyzer
  * @date 2026-10-17
  * 
  */
