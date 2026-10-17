@@ -1,5 +1,5 @@
 /**
- * @file ir_core.c
+ * @file main.c
  * @author your name (you@domain.com)
  * @brief Minimal LLVM IRREDUCIBLE Architectural Graph & Entanglement Analyzer
  * @date 2026-10-17
@@ -7,6 +7,7 @@
  */
 
 #include "graph.h"
+#include "main.h"
 
 #include <ctype.h>
 #include <stdio.h>

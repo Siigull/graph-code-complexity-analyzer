@@ -1,5 +1,5 @@
-#ifndef IR_CORE_H                                        
-#define IR_CORE_H
+#ifndef MAIN_H                                        
+#define MAIN_H
 
 #include "graph.h"
 
@@ -35,4 +35,4 @@ void print_graph_dif(const char* basefilename, Graph* base, Graph* new);
 int main(int argc, char **argv);
 
 
-#endif /* IR_CORE */
+#endif /* MAIN */
