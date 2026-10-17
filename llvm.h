@@ -1,14 +1,21 @@
 #ifndef LLVM_H                                        
 #define LLVM_H
 
-#include "graph.h"
 
+#define MAXV 512
+#define SYMLEN 64
 
-static int sym_id(Graph *g, const char *s);
+typedef struct {
+    int n;
+    char name[MAXV][SYMLEN];
+    unsigned char E[MAXV][MAXV];
+} Raw_Graph;
+
+static int sym_id(Raw_Graph *g, const char *s);
 
 static const char *read_sym(const char *p, char *out);
 
-static void parse_ll(Graph *g, const char *path);
+static void parse_ll(Raw_Graph *g, const char *path);
 
 
 #endif /* LLVM_H */
