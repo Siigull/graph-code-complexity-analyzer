@@ -162,22 +162,27 @@ void print_graph(Snapshot* g) {
     const Raw_Graph *r = &g->raw;
     const Analysis *m = &g->metrics;
 
-    printf("%-24s %4s %4s %6s %5s %6s  %s\n",
+    printf("%-63s %4s %4s %6s %5s %6s  %s\n",
            "SYMBOL", "Ca", "Ce", "BLAST", "SCC", "LEVEL", "STRUCTURAL_ROLE");
-    printf("------------------------------------------------------------------------\n");
+    printf("----------------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < r->n; i++) {
         char lvl_s[16];
         if (m->lvl[i] < 0) snprintf(lvl_s, sizeof(lvl_s), "CYCLE");
         else snprintf(lvl_s, sizeof(lvl_s), "L%d", m->lvl[i]);
-        printf("%-24.24s %4d %4d %6d %5d %6s  %s\n",
+        printf("%-63.63s %4d %4d %6d %5d %6s  %s\n",
                r->name[i], m->ca[i], m->ce[i],
                m->blast[i], m->scc[i], lvl_s, role(m, i));
     }
 
-    printf("------------------------------------------------------------------------\n");
+    printf("----------------------------------------------------------------------------------------\n");
     printf("SUMMARY [%s]: Nodes=%d | Edges=%d | MaxSCC=%d | CyclicNodes=%d | PropCost=%.2f%%\n",
            g->filename, r->n, m->edges, m->max_scc, m->cyc_nodes, m->prop_cost);
+
+    for (int i = 0; i < r->n; i++)
+        for (int j = 0; j < r->n; j++)
+            if (r->E[i][j])
+                printf("EDGE %s %s\n", r->name[i], r->name[j]);
 
     return;
 }
