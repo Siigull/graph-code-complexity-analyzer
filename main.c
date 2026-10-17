@@ -26,6 +26,7 @@ static void step1_transitive_closure(const Raw_Graph *raw, Analysis *a) {
             }
         }
     }
+
     for (int k = 0; k < n; k++) {
         for (int i = 0; i < n; i++) {
             if (!a->R[i][k]) continue;
@@ -39,19 +40,26 @@ static void step1_transitive_closure(const Raw_Graph *raw, Analysis *a) {
 /* PART 2: Cycle Detection (Diagonal R[i][i]) & Mutual-Reachability SCCs */
 static void step2_cycles_and_sccs(int n, Analysis *a) {
     a->max_scc = n ? 1 : 0;
+
     for (int i = 0; i < n; i++) {
         if (!a->R[i][i]) {
             a->scc[i] = 1;
             a->lvl[i] = 0;
             continue;
         }
+
         a->cyc_nodes++;
         a->lvl[i] = -1;
-        for (int j = 0; j < n; j++)
-            if (a->R[i][j] && a->R[j][i])
+
+        for (int j = 0; j < n; j++) {
+            if (a->R[i][j] && a->R[j][i]) {
                 a->scc[i]++;
-        if (a->scc[i] > a->max_scc)
+            }
+        }
+
+        if (a->scc[i] > a->max_scc) {
             a->max_scc = a->scc[i];
+        }
     }
 }
 
@@ -59,6 +67,7 @@ static void step2_cycles_and_sccs(int n, Analysis *a) {
 /* PART 3: Downstream Blast Radius & Global Propagation Cost (Row-Major) */
 static void step3_blast_and_propcost(int n, Analysis *a) {
     int reach_pairs = n;
+
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             if (i != j && a->R[i][j]) {
@@ -67,6 +76,7 @@ static void step3_blast_and_propcost(int n, Analysis *a) {
             }
         }
     }
+    
     a->prop_cost = n ? (100.0 * reach_pairs) / (n * n) : 0.0;
 }
 
@@ -74,10 +84,14 @@ static void step3_blast_and_propcost(int n, Analysis *a) {
 /* PART 4: Longest-Path DAG Levelization with Early Exit */
 static void step4_topological_levels(const Raw_Graph *raw, Analysis *a) {
     int n = raw->n;
+
     for (int step = 0; step < n; step++) {
         int changed = 0;
+
         for (int i = 0; i < n; i++) {
+
             if (a->lvl[i] < 0) continue;
+
             for (int j = 0; j < n; j++) {
                 if (raw->E[i][j]) {
                     int callee_lvl = (a->lvl[j] < 0) ? 0 : a->lvl[j];
@@ -88,6 +102,7 @@ static void step4_topological_levels(const Raw_Graph *raw, Analysis *a) {
                 }
             }
         }
+        
         if (!changed) break;
     }
 }
