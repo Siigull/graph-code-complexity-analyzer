@@ -8,9 +8,11 @@
 
 #include "llvm.h"
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
 
-
-static int sym_id(Raw_Graph *g, const char *s) {
+int sym_id(Raw_Graph *g, const char *s) {
     for (int i = 0; i < g->n; i++)
         if (!strcmp(g->name[i], s)) return i;
     if (g->n >= MAXV) { fprintf(stderr, "MAXV exceeded\n"); exit(1); }
@@ -19,7 +21,7 @@ static int sym_id(Raw_Graph *g, const char *s) {
 }
 
 
-static const char *read_sym(const char *p, char *out) {
+const char *read_sym(const char *p, char *out) {
     int i = 0;
     if (*p == '"') { /* Handle quoted LLVM identifiers: @"..." */
         for (p++; *p && *p != '"'; p++)
@@ -34,7 +36,7 @@ static const char *read_sym(const char *p, char *out) {
 }
 
 
-static void parse_ll(Raw_Graph *g, const char *path) {
+void parse_ll(Raw_Graph *g, const char *path) {
     FILE *f = fopen(path, "r");
     if (!f) { perror(path); exit(1); }
     char line[4096], sym[SYMLEN];

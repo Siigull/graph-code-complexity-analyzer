@@ -11,11 +11,11 @@ typedef struct {
     unsigned char E[MAXV][MAXV];
 } Raw_Graph;
 
-static int sym_id(Raw_Graph *g, const char *s);
+int sym_id(Raw_Graph *g, const char *s);
 
-static const char *read_sym(const char *p, char *out);
+const char *read_sym(const char *p, char *out);
 
-static void parse_ll(Raw_Graph *g, const char *path);
+void parse_ll(Raw_Graph *g, const char *path);
 
 
 #endif /* LLVM_H */
