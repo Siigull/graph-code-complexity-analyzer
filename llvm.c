@@ -11,11 +11,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <assert.h>
 
 int sym_id(Raw_Graph *g, const char *s) {
+    assert(strlen(s) < SYMLEN && "symbol name must be shorter than SYMLEN (64)");
+    assert(g->n < MAXV && "INCREASE MAXV");
+
     for (int i = 0; i < g->n; i++)
         if (!strcmp(g->name[i], s)) return i;
-    if (g->n >= MAXV) { fprintf(stderr, "MAXV exceeded\n"); exit(1); }
+        
     snprintf(g->name[g->n], SYMLEN, "%s", s);
     return g->n++;
 }
@@ -24,12 +28,17 @@ int sym_id(Raw_Graph *g, const char *s) {
 const char *read_sym(const char *p, char *out) {
     int i = 0;
     if (*p == '"') { /* Handle quoted LLVM identifiers: @"..." */
-        for (p++; *p && *p != '"'; p++)
-            if (i < SYMLEN - 1) out[i++] = *p;
+        for (p++; *p && *p != '"'; p++) {
+            assert(i < SYMLEN - 1 && "quoted symbol must be shorter than SYMLEN (64)");
+            out[i++] = *p;
+        }
         if (*p == '"') p++;
     } else {
-        while (*p && (isalnum((unsigned char)*p) || strchr("_.$", *p)))
-            if (i < SYMLEN - 1) out[i++] = *p++; else p++;
+        while (*p && (isalnum((unsigned char)*p) || strchr("_.$", *p))) {
+            assert(i < SYMLEN - 1 && "symbol must be shorter than SYMLEN (64)");
+            out[i++] = *p;
+            p++;
+        }
     }
     out[i] = '\0';
     return p;
