@@ -34,9 +34,9 @@ except ImportError:
     sys.exit("matplotlib is required: pip install matplotlib")
 
 try:
-    import networkx as nx
+    import numpy as np
 except ImportError:
-    nx = None
+    sys.exit("numpy is required: pip install numpy")
 
 ROLE_COLORS = {
     "ENTRY_ROOT":        "#4c9f70",  # green
@@ -161,28 +161,81 @@ def render_level(nodes, ax):
 
 # ---------------------------------------------------------------- force layout
 
-# main.c prints table symbols truncated: %-24.24s
+# fallback prefix length for matching table symbols against full EDGE
+# names (safety net; the C table width now tracks SYMLEN so this should
+# never trigger)
 TRUNC = 24
 
 
-def render_force(nodes, edges, ax, seed, edge_alpha):
+def spring_layout_numpy(n, edges_idx, iterations, seed, k):
+    """Vectorized Fruchterman-Reingold. O(V^2) memory in float32; fine for
+    a few thousand nodes (networkx's spring_layout is O(V^2) of *Python-level*
+    work per iteration and crawls past ~500 nodes)."""
+    rng = np.random.RandomState(seed)
+    pos = rng.rand(n, 2).astype(np.float32)
+    src, dst = edges_idx
+    k = k or 1.0 / math.sqrt(n)
+    k2 = k * k
+    t = 1.0
+    dt = t / (iterations + 1)
+
+    for it in range(iterations):
+        # pairwise deltas (n x n each)
+        dx = pos[:, 0][:, None] - pos[:, 0][None, :]
+        dy = pos[:, 1][:, None] - pos[:, 1][None, :]
+        dist = np.sqrt(dx * dx + dy * dy, dtype=np.float32)
+        np.fill_diagonal(dist, 1.0)  # diagonal contributes nothing (dx=dy=0)
+        np.maximum(dist, 0.01, out=dist)
+        inv2 = (1.0 / dist) ** 2
+
+        # repulsion: k^2/d along unit vector == k^2/d^2 * delta
+        fx = (k2 * inv2 * dx).sum(axis=1)
+        fy = (k2 * inv2 * dy).sum(axis=1)
+        del dx, dy, dist, inv2
+
+        # attraction along edges: d^2/k along unit vector == d/k * delta
+        if len(src):
+            ex = pos[dst, 0] - pos[src, 0]
+            ey = pos[dst, 1] - pos[src, 1]
+            ed = np.maximum(np.sqrt(ex * ex + ey * ey), 0.01)
+            coef = ed / k
+            np.add.at(fx, src, coef * ex)
+            np.add.at(fy, src, coef * ey)
+            np.add.at(fx, dst, -(coef * ex))
+            np.add.at(fy, dst, -(coef * ey))
+
+        # cap step by temperature
+        disp = np.stack((fx, fy), axis=1)
+        norm = np.maximum(np.sqrt((disp * disp).sum(axis=1)), 1e-6)
+        pos += disp * (np.minimum(norm, t) / norm)[:, None]
+        t -= dt
+        if it % 10 == 9 and float(np.mean(norm)) < 1e-3:
+            break  # converged
+
+    # normalize to unit square
+    lo, hi = pos.min(axis=0), pos.max(axis=0)
+    span = np.where(hi - lo > 1e-9, hi - lo, 1.0)
+    return (pos - lo) / span
+
+
+def render_force(nodes, edges, ax, seed, edge_alpha, iterations):
     """Draw force-directed layout; returns {table_symbol: (x, y)}."""
-    if nx is None:
-        sys.exit("error: force layout needs networkx (pip install networkx)")
+    # node universe = table symbols + every edge endpoint
+    names = {n["symbol"] for n in nodes}
+    for a, b in edges:
+        names.add(a)
+        names.add(b)
+    idx = {s: i for i, s in enumerate(sorted(names))}
 
-    G = nx.DiGraph()
-    G.add_edges_from(edges)
-    for n in nodes:  # keep isolated table-only nodes visible
-        G.add_node(n["symbol"])
-
-    # resolve table symbols (truncated by tern) to full graph names
+    # resolve table symbols to full graph names (safety net: prefix match
+    # if tern ever truncates a table name again)
     by_prefix = {}
-    for s in G.nodes:
+    for s in names:
         by_prefix.setdefault(s[:TRUNC], []).append(s)
     used, resolved = set(), {}
     for n in nodes:
         s = n["symbol"]
-        if s in G:
+        if s in idx:
             resolved[s] = s
         else:
             cands = [c for c in by_prefix.get(s[:TRUNC], []) if c not in used]
@@ -190,13 +243,17 @@ def render_force(nodes, edges, ax, seed, edge_alpha):
                 resolved[s] = cands[0]
                 used.add(cands[0])
 
-    pos = nx.spring_layout(G, k=1.2 / math.sqrt(max(len(G), 1)),
-                           iterations=300, seed=seed)
+    src = np.fromiter((idx[a] for a, b in edges), dtype=np.int64,
+                      count=len(edges)) if edges else np.array([], np.int64)
+    dst = np.fromiter((idx[b] for a, b in edges), dtype=np.int64,
+                      count=len(edges)) if edges else np.array([], np.int64)
+
+    pos = spring_layout_numpy(len(idx), (src, dst), iterations, seed, None)
 
     from matplotlib.collections import LineCollection
 
     # draw edges as one collection (fast, low alpha to see structure)
-    segs = [(pos[a], pos[b]) for a, b in G.edges() if a in pos and b in pos]
+    segs = np.stack((pos[src], pos[dst]), axis=1)
     ax.add_collection(LineCollection(
         segs, colors="#9aa5b1", linewidths=0.4, alpha=edge_alpha, zorder=2))
 
@@ -204,31 +261,32 @@ def render_force(nodes, edges, ax, seed, edge_alpha):
     vis = [(n, resolved[n["symbol"]]) for n in nodes if n["symbol"] in resolved]
     deg = [n["ca"] + n["ce"] for n, _ in vis]
     dmax = max(deg) or 1
-    ax.scatter([pos[full][0] for _, full in vis],
-               [pos[full][1] for _, full in vis],
+    ax.scatter(pos[[idx[full] for _, full in vis], 0],
+               pos[[idx[full] for _, full in vis], 1],
                s=[20 + 500 * math.sqrt(d / dmax) for d in deg],
                c=[ROLE_COLORS.get(n["role"], "#777777") for n, _ in vis],
                alpha=0.85, edgecolors="black", linewidths=0.4, zorder=3)
 
     # graph endpoints tern never listed in its table: small grey dots
-    rest = [s for s in G if s not in set(resolved.values())]
+    rest = [s for s in names if s not in set(resolved.values())]
     if rest:
-        ax.scatter([pos[s][0] for s in rest], [pos[s][1] for s in rest],
+        ri = [idx[s] for s in rest]
+        ax.scatter(pos[ri, 0], pos[ri, 1],
                    s=12, c="#c8cdd3", edgecolors="black", linewidths=0.3,
                    zorder=3)
 
-    ax.set_xlabel(f"force-directed embedding ({len(G)} nodes, {len(G.edges())} edges; "
+    ax.set_xlabel(f"force-directed embedding ({len(idx)} nodes, {len(edges)} edges; "
                   f"grey = unlisted endpoints)")
     ax.set_ylabel("")
     ax.set_xticks([])
     ax.set_yticks([])
-    return {s: pos[full] for s, full in resolved.items()}
+    return {s: (pos[idx[full], 0], pos[idx[full], 1]) for s, full in resolved.items()}
 
 
 # ---------------------------------------------------------------- common
 
 def render(nodes, edges, summary, delta, verdict, out, show, dpi, label_top,
-           layout, seed, edge_alpha):
+           layout, seed, edge_alpha, iterations):
     use_agg = not show
     if use_agg:
         matplotlib.use("Agg")
@@ -242,7 +300,7 @@ def render(nodes, edges, summary, delta, verdict, out, show, dpi, label_top,
     fig, ax = plt.subplots(figsize=(16, 11))
 
     if layout == "force":
-        pos = render_force(nodes, edges, ax, seed, edge_alpha)
+        pos = render_force(nodes, edges, ax, seed, edge_alpha, iterations)
     else:
         pos = render_level(nodes, ax)
 
@@ -299,6 +357,8 @@ def main():
     ap.add_argument("--seed", type=int, default=42, help="spring layout seed")
     ap.add_argument("--edge-alpha", type=float, default=0.25,
                     help="edge line opacity in force layout")
+    ap.add_argument("--iterations", type=int, default=100,
+                    help="force layout iterations (more = smoother, slower)")
     args = ap.parse_args()
 
     if args.raw or args.input == "-":
@@ -316,7 +376,7 @@ def main():
     nodes, edges, summary, delta, verdict = parse_tern_output(text)
     out = args.out or "tern_graph.png"
     render(nodes, edges, summary, delta, verdict, out, args.show, args.dpi,
-           args.labels, args.layout, args.seed, args.edge_alpha)
+           args.labels, args.layout, args.seed, args.edge_alpha, args.iterations)
 
 
 if __name__ == "__main__":

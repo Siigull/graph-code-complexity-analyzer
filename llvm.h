@@ -2,8 +2,8 @@
 #define LLVM_H
 
 
-#define MAXV 512
-#define SYMLEN 64
+#define MAXV 2048
+#define SYMLEN 128
 
 typedef struct {
     int n;

@@ -108,12 +108,73 @@ static void step4_topological_levels(const Raw_Graph *raw, Analysis *a) {
 }
 
 
-static void analyze(const Raw_Graph *raw, Analysis *a) {
+static void analyze(Raw_Graph *raw, Analysis *a) {
+    collapse_linear_blocks(raw);
     // memset(a, 0, sizeof(*a));
     step1_transitive_closure(raw, a);
     step2_cycles_and_sccs(raw->n, a);
     step3_blast_and_propcost(raw->n, a);
     step4_topological_levels(raw, a);
+}
+
+
+/* Helper: returns 1 if node `i` is an internal basic block (not `:entry` or global) */
+static int is_internal_bb(const Raw_Graph *raw, int i) {
+    const char *colon = strchr(raw->name[i], ':');
+    return colon && strcmp(colon, ":entry") != 0;
+}
+
+
+/* Removes vertex `del` from RawGraph and compacts the adjacency matrix */
+static void remove_vertex(Raw_Graph *raw, int del) {
+    int n = raw->n;
+    for (int i = del; i < n - 1; i++) {
+        memcpy(raw->name[i], raw->name[i + 1], SYMLEN);
+        for (int j = 0; j < n; j++)
+            raw->E[i][j] = raw->E[i + 1][j];
+    }
+    for (int i = 0; i < n - 1; i++)
+        for (int j = del; j < n - 1; j++)
+            raw->E[i][j] = raw->E[i][j + 1];
+    raw->n--;
+}
+
+
+/* Contracts linear pass-through blocks while preserving branching hubs & sinks */
+static void collapse_linear_blocks(Raw_Graph *raw) {
+    int changed = 1;
+    while (changed) {
+        changed = 0;
+        for (int v = 0; v < raw->n; v++) {
+            if (!is_internal_bb(raw, v) || raw->E[v][v]) continue;
+
+            int in_deg = 0, out_deg = 0, bb_out = 0;
+            for (int i = 0; i < raw->n; i++) {
+                if (raw->E[i][v]) in_deg++;
+                if (raw->E[v][i]) {
+                    out_deg++;
+                    if (is_internal_bb(raw, i)) bb_out++;
+                }
+            }
+            /* Collapse if:
+             * 1. Pure pass-through jump (in_deg >= 1 and total out_deg == 1), OR
+             * 2. Linear sequence block (in_deg == 1 and jumps to at most 1 next block,
+             *    folding its external @calls upward into its single predecessor).
+             */
+            if (in_deg >= 1 && (out_deg == 1 || (in_deg == 1 && bb_out <= 1))) {
+                for (int u = 0; u < raw->n; u++) {
+                    if (!raw->E[u][v]) continue;
+                    raw->E[u][v] = 0;
+                    for (int w = 0; w < raw->n; w++)
+                        if (u != w && raw->E[v][w])
+                            raw->E[u][w] = 1; /* Predecessor u inherits v's targets */
+                }
+                remove_vertex(raw, v);
+                changed = 1;
+                break; /* Restart scan on compacted matrix */
+            }
+        }
+    }
 }
 
 
@@ -125,6 +186,10 @@ int main(int argc, char **argv) {
 
     // Analyze current.ll
     Snapshot *cur = calloc(1, sizeof(Snapshot));
+    if (cur == NULL) {
+        fprintf(stderr, "OOM, tried to alloc %ld bytes", sizeof(Snapshot));
+        exit(1);
+    }
     memcpy(&cur->filename, argv[1], MIN(strlen(argv[1]), 49));
     parse_ll(&cur->raw, argv[1]);
     analyze(&cur->raw, &cur->metrics);
@@ -135,6 +200,10 @@ int main(int argc, char **argv) {
     } else {
         // Analyze baseline.ll
         Snapshot *base = calloc(1, sizeof(Snapshot));
+        if (base == NULL) {
+            fprintf(stderr, "OOM, tried to alloc %ld bytes", sizeof(Snapshot));
+            exit(1);
+        }
         memcpy(&base->filename, argv[2], MIN(strlen(argv[2]), 49));
         parse_ll(&base->raw, argv[2]);
         analyze(&base->raw, &base->metrics);
@@ -158,24 +227,32 @@ static const char *role(const Analysis *a, int i) {
 }
 
 
+/* The symbol column width follows SYMLEN at runtime so table names are
+ * never truncated relative to the EDGE dump (parse_ll caps names at
+ * SYMLEN-1 chars). Stringification can't do arithmetic, hence snprintf. */
 void print_graph(Snapshot* g) {
     const Raw_Graph *r = &g->raw;
     const Analysis *m = &g->metrics;
+    char sym_fmt[32], hdr_fmt[96], row_fmt[96];
 
-    printf("%-63s %4s %4s %6s %5s %6s  %s\n",
+    snprintf(sym_fmt, sizeof sym_fmt, "%%-%d.%ds", SYMLEN - 1, SYMLEN - 1);
+    snprintf(hdr_fmt, sizeof hdr_fmt, "%s %%4s %%4s %%6s %%5s %%6s  %%s\n", sym_fmt);
+    snprintf(row_fmt, sizeof row_fmt, "%s %%4d %%4d %%6d %%5d %%6s  %%s\n", sym_fmt);
+
+    printf(hdr_fmt,
            "SYMBOL", "Ca", "Ce", "BLAST", "SCC", "LEVEL", "STRUCTURAL_ROLE");
-    printf("----------------------------------------------------------------------------------------\n");
+    printf("------------------------------------------------------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < r->n; i++) {
         char lvl_s[16];
         if (m->lvl[i] < 0) snprintf(lvl_s, sizeof(lvl_s), "CYCLE");
         else snprintf(lvl_s, sizeof(lvl_s), "L%d", m->lvl[i]);
-        printf("%-63.63s %4d %4d %6d %5d %6s  %s\n",
+        printf(row_fmt,
                r->name[i], m->ca[i], m->ce[i],
                m->blast[i], m->scc[i], lvl_s, role(m, i));
     }
 
-    printf("----------------------------------------------------------------------------------------\n");
+    printf("------------------------------------------------------------------------------------------------------------------------------\n");
     printf("SUMMARY [%s]: Nodes=%d | Edges=%d | MaxSCC=%d | CyclicNodes=%d | PropCost=%.2f%%\n",
            g->filename, r->n, m->edges, m->max_scc, m->cyc_nodes, m->prop_cost);
 

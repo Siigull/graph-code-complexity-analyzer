@@ -41,8 +41,13 @@ static void step3_blast_and_propcost(int n, Analysis *a);
 static void step4_topological_levels(const Raw_Graph *raw, Analysis *a);
 
 
-static void analyze(const Raw_Graph *raw, Analysis *a);
+static void analyze(Raw_Graph *raw, Analysis *a);
 
+static int is_internal_bb(const Raw_Graph *raw, int i);
+
+static void remove_vertex(Raw_Graph *raw, int del);
+
+static void collapse_linear_blocks(Raw_Graph *raw);
 
 int main(int argc, char **argv);
 
