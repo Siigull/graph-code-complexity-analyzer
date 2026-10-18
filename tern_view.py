@@ -49,8 +49,9 @@ HOVER_RING = (245, 220, 90)
 
 # left node-list sidebar geometry (pixels)
 SB_W = 270
-SB_TITLE_H = 26
+SB_TITLE_H = 40
 SB_ROW = 17
+SB_SORTS = ("name", "degree", "role")
 
 
 def hex_rgb(c):
@@ -139,7 +140,12 @@ def fr_step(pos, src, dst, k, temp):
     dist = np.sqrt(dx * dx + dy * dy)
     np.fill_diagonal(dist, 1.0)
     np.maximum(dist, 0.01, out=dist)
-    inv2 = 1.0 / (dist * dist)
+    d2 = dist * dist
+    # anti-overlap: extra 1/d^4 repulsion below ~k/2 so nodes can't sit on
+    # top of each other; smooth, negligible at normal spacing (25% extra at
+    # d=k, none beyond), and still temp-capped so it cannot explode
+    s2 = (k / 2.0) ** 2
+    inv2 = 1.0 / d2 + s2 / (d2 * d2)
     k2 = k * k
 
     fx = (k2 * inv2 * dx).sum(axis=1)
@@ -159,6 +165,44 @@ def fr_step(pos, src, dst, k, temp):
     norm = np.maximum(np.sqrt((disp * disp).sum(axis=1)), 1e-6)
     step = np.minimum(norm, temp) / norm
     pos += disp * step[:, None]
+
+
+def resolve_overlaps(pos, radii, cap, pad=0.5, relax=0.8, iters=3,
+                    eps=0.1):
+    """Post-pass after fr_step: push node circles apart so big nodes can
+    never sit on top of each other. Directly moves positions (not a force)
+    toward zero penetration for every overlapping pair. Kept gentle on
+    purpose so it cannot fight the springs or inflate the layout:
+      - pairs overlapping by less than `eps` (sub-pixel) are ignored
+      - per-node push is capped at `cap` (well under fr_step's temp)
+    Springs may pull nodes back together next step, but this runs last
+    each frame, so the drawn state is always (nearly) overlap-free.
+    Pinned/dragged nodes are restored by the caller afterwards."""
+    n = len(pos)
+    if n < 2:
+        return
+    sep = radii[:, None] + radii[None, :] + pad
+    for _ in range(iters):
+        dx = pos[:, 0][:, None] - pos[:, 0][None, :]
+        dy = pos[:, 1][:, None] - pos[:, 1][None, :]
+        d = np.sqrt(dx * dx + dy * dy)
+        np.fill_diagonal(d, np.inf)
+        pen = sep - d
+        pen[pen < eps] = 0.0        # kissing pairs: leave them be
+        if not pen.any():
+            return
+        coincident = d <= 1e-6
+        d = np.maximum(d, 1e-6)
+        # coincident pairs split along +x/-x by index order (opposite dirs,
+        # so they always separate instead of drifting together)
+        split = np.sign(np.arange(n)[:, None] - np.arange(n)[None, :])
+        ux = np.where(coincident, split, dx / d)
+        uy = np.where(coincident, 0.0, dy / d)
+        push = np.stack(((pen * ux).sum(axis=1), (pen * uy).sum(axis=1)), axis=1)
+        disp = 0.5 * relax * push
+        norm = np.maximum(np.sqrt((disp * disp).sum(axis=1)), 1e-6)
+        scale = np.minimum(norm, cap) / norm
+        pos += disp * scale[:, None]
 
 
 # ---------------------------------------------------------------- camera
@@ -207,6 +251,8 @@ class App:
         self.n = len(univ["names"])
         self.k = WORLD / math.sqrt(self.n)
         self.dmax = max(univ["degree"].max(), 1.0)
+        # visual radii (same formula as node_radius) for overlap resolution
+        self.radii = 0.5 + 3.2 * np.sqrt(univ["degree"] / self.dmax)
 
         pygame.init()
         pygame.display.set_caption("tern view")
@@ -238,6 +284,8 @@ class App:
         self.visible = np.ones(self.n, dtype=bool)
         self.sb_scroll = 0
         self.sb_hover = -1
+        self.sb_selected = -1
+        self.sb_set_sort("name")
         self._rebuild_active()
 
         # top-degree table symbols get persistent labels
@@ -296,10 +344,15 @@ class App:
             elif ev.type == pygame.MOUSEBUTTONDOWN:
                 if ev.button == 1:
                     if self.sidebar and ev.pos[0] < SB_W:
-                        i = self.sb_row_at(ev.pos[1])
-                        if i >= 0:
-                            self.toggle_node(i)
+                        if ev.pos[1] < SB_TITLE_H:   # header: cycle sort mode
+                            self.sb_set_sort(SB_SORTS[
+                                (SB_SORTS.index(self.sb_sort) + 1) % len(SB_SORTS)])
+                        else:
+                            i = self.sb_row_at(ev.pos[1])
+                            if i >= 0:
+                                self.toggle_node(i)
                     elif self.hover_idx >= 0:
+                        self.sb_select(self.hover_idx)
                         self.drag_idx = self.hover_idx
                     else:
                         self.panning = True
@@ -324,6 +377,7 @@ class App:
         """Cache the visible node set and the edges/physics views of it."""
         act = np.flatnonzero(self.visible)
         self.active = act
+        self.radii_local = self.radii[act]
         rank = np.full(self.n, -1, dtype=np.int64)
         rank[act] = np.arange(len(act))
         src, dst = self.univ["src"], self.univ["dst"]
@@ -345,6 +399,34 @@ class App:
         if self.hover_idx == i:
             self.hover_idx = -1
 
+    def sb_set_sort(self, mode):
+        """Rebuild the row order of the node list."""
+        self.sb_sort = mode
+        names, info = self.univ["names"], self.univ["info"]
+        if mode == "degree":
+            self.sb_order = np.argsort(-self.univ["degree"], kind="stable")
+        elif mode == "role":
+            rank = {r: i for i, r in enumerate(
+                ("ENTRY_ROOT", "SINK_ABSTRACTION", "PASS_THROUGH_HUB",
+                 "CYCLE_TRAP", "INTERNAL"))}
+            self.sb_order = np.array(sorted(
+                range(self.n),
+                key=lambda i: (rank.get(info[names[i]]["role"], 99)
+                               if names[i] in info else 99, names[i])),
+                dtype=np.int64)
+        else:   # name
+            self.sb_order = np.arange(self.n)
+
+    def sb_select(self, i):
+        """Mark node i as selected; scroll the list so its row is on screen"""
+        self.sb_selected = i
+        if not self.sidebar or i < 0:
+            return
+        row = int(np.flatnonzero(self.sb_order == i)[0])
+        rows = self.sb_rows()
+        if not self.sb_scroll <= row < self.sb_scroll + rows:
+            self.sb_scroll = max(0, min(row - rows // 3, self.n - rows))
+
     def sb_rows(self):
         return max(1, (self.cam.h - SB_TITLE_H - 8) // SB_ROW)
 
@@ -352,8 +434,8 @@ class App:
         """node index of the sidebar row at pixel y, or -1"""
         if my < SB_TITLE_H:
             return -1
-        i = (my - SB_TITLE_H) // SB_ROW + self.sb_scroll
-        return i if 0 <= i < self.n else -1
+        k = (my - SB_TITLE_H) // SB_ROW + self.sb_scroll
+        return self.sb_order[k] if 0 <= k < self.n else -1
 
     # ------------------------------------------------------------ per-frame
 
@@ -385,6 +467,10 @@ class App:
         for _ in range(self.args.steps):
             fr_step(sub, self.asrc, self.adst, self.k, self.temp)
             sub[pin_l] = pin_pos_l[pin_l]
+            if drag_l >= 0:
+                sub[drag_l] = self.cam.to_world(*self.mouse)
+            resolve_overlaps(sub, self.radii_local, self.temp / 3.0)
+            sub[pin_l] = pin_pos_l[pin_l]      # pins/drag win over collisions
             if drag_l >= 0:
                 sub[drag_l] = self.cam.to_world(*self.mouse)
         self.pos[act] = sub   # self.pos[act] is a copy; write results back
@@ -508,20 +594,29 @@ class App:
         pygame.draw.line(scr, (70, 76, 86), (SB_W - 1, 0), (SB_W - 1, cam.h))
 
         vis = int(self.visible.sum())
-        title = self.font_small.render(
-            f"nodes {vis}/{self.n}   click: show/hide", True, DIM)
-        scr.blit(title, (8, 8))
+        scr.blit(self.font_small.render(
+            f"nodes {vis}/{self.n}   click row: show/hide", True, DIM), (8, 6))
+        scr.blit(self.font_small.render(
+            f"sort: {self.sb_sort}   (click to change)", True, DIM), (8, 22))
 
         names, info, deg = self.univ["names"], self.univ["info"], self.univ["degree"]
+        sel_row = -1
+        if self.sb_selected >= 0:
+            hits = np.flatnonzero(self.sb_order == self.sb_selected)
+            sel_row = int(hits[0]) if len(hits) else -1
         for k in range(self.sb_scroll, min(self.n, self.sb_scroll + rows)):
+            i = self.sb_order[k]
             y = SB_TITLE_H + (k - self.sb_scroll) * SB_ROW
-            if k == self.sb_hover:
+            if k == sel_row:
+                pygame.draw.rect(scr, (52, 58, 70), (2, y, SB_W - 4, SB_ROW))
+                pygame.draw.rect(scr, HOVER_RING, (2, y, 3, SB_ROW))
+            elif i == self.sb_hover:
                 pygame.draw.rect(scr, (44, 50, 60), (2, y, SB_W - 4, SB_ROW))
-            nm = names[k]
+            nm = names[i]
             ninfo = info.get(nm)
             col = ROLE_RGB.get(ninfo["role"], UNKNOWN_RGB) if ninfo else UNKNOWN_RGB
             bx, by = 10, y + (SB_ROW - 10) // 2
-            if self.visible[k]:
+            if self.visible[i]:
                 pygame.draw.rect(scr, col, (bx, by, 10, 10), border_radius=2)
             else:
                 pygame.draw.rect(scr, (90, 96, 104), (bx, by, 10, 10), 1,
@@ -531,10 +626,12 @@ class App:
                 text = text[:-2]
             if text != nm:
                 text += "\u2026"
-            name_col = TEXT if self.visible[k] else (108, 112, 120)
+            name_col = TEXT if self.visible[i] else (108, 112, 120)
+            if i == self.sb_selected:
+                name_col = (245, 220, 90) if self.visible[i] else (150, 140, 80)
             surf = self.font_small.render(text, True, name_col)
             scr.blit(surf, (bx + 16, y + (SB_ROW - surf.get_height()) // 2))
-            d = self.font_small.render(str(int(deg[k])), True, DIM)
+            d = self.font_small.render(str(int(deg[i])), True, DIM)
             scr.blit(d, (SB_W - 10 - d.get_width(),
                          y + (SB_ROW - d.get_height()) // 2))
 
@@ -589,7 +686,7 @@ class App:
                      "P: pin/unpin hovered node",
                      "drag space / RMB: pan    wheel: zoom",
                      "L: force/level   SPACE: pause physics   R: re-seed",
-                     "N: node list   H: help   S: screenshot   Q/ESC: quit"]
+                     "N: node list   click node: locate in list   H: help   S: screenshot   Q/ESC: quit"]
             for j, l in enumerate(lines):
                 scr.blit(self.font_small.render(l, True, DIM),
                          (ox + 8, cam.h - 14 - (len(lines) - j) * 15))

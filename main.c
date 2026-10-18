@@ -108,16 +108,6 @@ static void step4_topological_levels(const Raw_Graph *raw, Analysis *a) {
 }
 
 
-static void analyze(Raw_Graph *raw, Analysis *a) {
-    collapse_linear_blocks(raw);
-    // memset(a, 0, sizeof(*a));
-    step1_transitive_closure(raw, a);
-    step2_cycles_and_sccs(raw->n, a);
-    step3_blast_and_propcost(raw->n, a);
-    step4_topological_levels(raw, a);
-}
-
-
 /* Helper: returns 1 if node `i` is an internal basic block (not `:entry` or global) */
 static int is_internal_bb(const Raw_Graph *raw, int i) {
     const char *colon = strchr(raw->name[i], ':');
@@ -175,6 +165,98 @@ static void collapse_linear_blocks(Raw_Graph *raw) {
             }
         }
     }
+}
+
+
+static double merge_score(const Raw_Graph *raw, int u, int v) {
+    int n = raw->n;
+    int shared_in = 0, union_in = 0, shared_out = 0, union_out = 0;
+
+    for (int k = 0; k < n; k++) {
+        if (k == u || k == v) continue;
+        int u_in = raw->E[k][u], v_in = raw->E[k][v];
+        int u_out = raw->E[u][k], v_out = raw->E[v][k];
+
+        if (u_in || v_in)   { union_in++;  if (u_in && v_in)   shared_in++; }
+        if (u_out || v_out) { union_out++; if (u_out && v_out) shared_out++; }
+    }
+
+    /* Case 1: Exclusive Private Helper (u is the ONLY caller of v, or vice versa) */
+    if (raw->E[u][v] && union_in == 0 && !raw->E[v][u]) return 1.0;
+
+    /* Case 2: Twin / Sibling / Cohesive Subsystem Nodes
+     * Require identical or near-identical external sinks (shared_out / union_out),
+     * AND require either shared callers OR direct mutual coupling (connected in E).
+     */
+    if (union_out == 0 && union_in == 0) return 0.0;
+    double out_sim = union_out ? (double)shared_out / union_out : 1.0;
+    double in_sim  = union_in  ? (double)shared_in  / union_in  : 1.0;
+
+    int connected = raw->E[u][v] || raw->E[v][u];
+    /* ENTROPY GUARD: Never merge two nodes if they pull in different external
+     * dependencies unless they already call each other with >= 80% shared sinks. */
+    if (connected && out_sim >= 0.80 && (in_sim >= 0.50 || union_in <= 1))
+        return 0.5 * (out_sim + in_sim) + 0.25; /* Boost connected cohesive clusters */
+
+    if (out_sim == 1.0 && in_sim == 1.0)
+        return 1.0; /* Exact structural twins (e.g. parallel AST visitor handlers) */
+
+    return 0.0;
+}
+
+/* min_similarity in [0.0, 1.0]: merges nodes (u, v) when S(u,v) >= min_similarity.
+ *
+ *   S(u, v) = 0.7 * (|Out(u) n Out(v)| / |Out(u) u Out(v)|)   [shared callees]
+ *           + 0.3 * (|In(u)  n In(v)|  / |In(u)  u In(v)|)    [shared callers]
+ *   (Returns 1.0 for exact twins or single-caller private helpers.)
+ *
+ *   1.00 = strict (exact twins & private helpers only)
+ *   0.70 = default (collapses recursive parsers / cohesive subsystems)
+ *   0.50 = loose (risks merging distinct modules that share common utilities)
+ */
+static void cluster_nearest_concepts(Raw_Graph *raw, double min_similarity) {
+    for (;;) {
+        int best_u = -1, best_v = -1;
+        double best_s = min_similarity;
+
+        for (int u = 0; u < raw->n; u++) {
+            for (int v = u + 1; v < raw->n; v++) {
+                double s = merge_score(raw, u, v);
+                if (s > best_s) {
+                    best_s = s;
+                    best_u = u;
+                    best_v = v;
+                }
+            }
+        }
+        if (best_u < 0) break; /* Equilibrium reached: any further merge adds entropy! */
+
+        /* Merge best_v into best_u: union their edges and mark cluster size in name */
+        for (int k = 0; k < raw->n; k++) {
+            if (k != best_u) {
+                raw->E[best_u][k] |= raw->E[best_v][k];
+                raw->E[k][best_u] |= raw->E[k][best_v];
+            }
+        }
+        raw->E[best_u][best_u] = 0; /* Internal edge between u and v is now absorbed! */
+
+        char merged_name[SYMLEN];
+        snprintf(merged_name, SYMLEN, "%s+%s", raw->name[best_u], raw->name[best_v]);
+        snprintf(raw->name[best_u], SYMLEN, "%s", merged_name);
+
+        remove_vertex(raw, best_v);
+    }
+}
+
+
+static void analyze(Raw_Graph *raw, Analysis *a) {
+    collapse_linear_blocks(raw);
+    cluster_nearest_concepts(raw, 0.75);
+    // memset(a, 0, sizeof(*a));
+    step1_transitive_closure(raw, a);
+    step2_cycles_and_sccs(raw->n, a);
+    step3_blast_and_propcost(raw->n, a);
+    step4_topological_levels(raw, a);
 }
 
 
