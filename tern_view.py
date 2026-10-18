@@ -11,6 +11,8 @@ real window with a 60fps render loop (pygame) instead of matplotlib:
     keeps running, so its neighborhood gets pulled along live
   - live force-directed physics (SPACE to pause/resume, R to re-seed,
     L to toggle force <-> level-band layout, S to save a screenshot)
+  - left sidebar: list of every node; click a row to show/hide that node
+    in the graph (N toggles the sidebar, hover a row to locate the node)
 
 Usage (same input conventions as tern_graph.py):
   ./tern_view.py app.ll                  # runs ./tern app.ll
@@ -44,6 +46,11 @@ ROLE_RGB = {r: tuple(int(c[i:i + 2], 16) for i in (1, 3, 5))
             for r, c in ROLE_COLORS.items()}
 UNKNOWN_RGB = (200, 205, 211)   # endpoints not in tern's table
 HOVER_RING = (245, 220, 90)
+
+# left node-list sidebar geometry (pixels)
+SB_W = 270
+SB_TITLE_H = 26
+SB_ROW = 17
 
 
 def hex_rgb(c):
@@ -190,11 +197,12 @@ def node_radius(univ, i, dmax):
 
 
 class App:
-    def __init__(self, univ, pos, layout, summary, delta, verdict, args):
+    def __init__(self, univ, pos, layout, summary, delta, verdict, warning, args):
         self.univ = univ
         self.pos = pos
         self.layout = layout
         self.summary, self.delta, self.verdict = summary, delta, verdict
+        self.warning = warning
         self.args = args
         self.n = len(univ["names"])
         self.k = WORLD / math.sqrt(self.n)
@@ -223,6 +231,14 @@ class App:
         self.help = True
         self.pinned = np.zeros(self.n, dtype=bool)
         self.pin_pos = np.zeros((self.n, 2))
+
+        # node-list sidebar (N to toggle); hidden nodes are excluded from
+        # drawing, edges, hover and the physics simulation
+        self.sidebar = True
+        self.visible = np.ones(self.n, dtype=bool)
+        self.sb_scroll = 0
+        self.sb_hover = -1
+        self._rebuild_active()
 
         # top-degree table symbols get persistent labels
         table_deg = [(univ["degree"][i], i)
@@ -258,6 +274,8 @@ class App:
                     self.physics = self.layout == "force"
                 elif ev.key == pygame.K_h:
                     self.help = not self.help
+                elif ev.key == pygame.K_n:
+                    self.sidebar = not self.sidebar
                 elif ev.key == pygame.K_p and self.hover_idx >= 0:
                     i = self.hover_idx
                     self.pinned[i] = not self.pinned[i]
@@ -270,15 +288,24 @@ class App:
             elif ev.type == pygame.MOUSEWHEEL:
                 # MOUSEWHEEL carries no .pos in pygame 2; use live cursor
                 mx, my = pygame.mouse.get_pos()
-                self.cam.zoom(mx, my, 1.25 if ev.y > 0 else 0.8)
+                if self.sidebar and mx < SB_W:
+                    self.sb_scroll = max(0, min(self.sb_scroll - ev.y * 5,
+                                                self.n - self.sb_rows()))
+                else:
+                    self.cam.zoom(mx, my, 1.25 if ev.y > 0 else 0.8)
             elif ev.type == pygame.MOUSEBUTTONDOWN:
                 if ev.button == 1:
-                    if self.hover_idx >= 0:
+                    if self.sidebar and ev.pos[0] < SB_W:
+                        i = self.sb_row_at(ev.pos[1])
+                        if i >= 0:
+                            self.toggle_node(i)
+                    elif self.hover_idx >= 0:
                         self.drag_idx = self.hover_idx
                     else:
                         self.panning = True
                 elif ev.button == 3:
-                    self.panning = True
+                    if not (self.sidebar and ev.pos[0] < SB_W):
+                        self.panning = True
             elif ev.type == pygame.MOUSEBUTTONUP:
                 if ev.button == 1 and self.drag_idx >= 0:
                     self.drag_idx = -1
@@ -291,27 +318,76 @@ class App:
                     self.cam.pan(ev.pos[0] - last[0], ev.pos[1] - last[1])
         return True
 
+    # ------------------------------------------------------------ visibility
+
+    def _rebuild_active(self):
+        """Cache the visible node set and the edges/physics views of it."""
+        act = np.flatnonzero(self.visible)
+        self.active = act
+        rank = np.full(self.n, -1, dtype=np.int64)
+        rank[act] = np.arange(len(act))
+        src, dst = self.univ["src"], self.univ["dst"]
+        if len(src):
+            keep = self.visible[src] & self.visible[dst]
+            self.active_edges = (src[keep], dst[keep])
+            self.asrc, self.adst = rank[src[keep]], rank[dst[keep]]
+        else:
+            self.active_edges = (src, dst)
+            self.asrc = self.adst = np.zeros(0, np.int64)
+
+    def toggle_node(self, i):
+        self.visible[i] = not self.visible[i]
+        self._rebuild_active()
+        if not self.visible[i]:
+            self.pinned[i] = False
+            if self.drag_idx == i:
+                self.drag_idx = -1
+        if self.hover_idx == i:
+            self.hover_idx = -1
+
+    def sb_rows(self):
+        return max(1, (self.cam.h - SB_TITLE_H - 8) // SB_ROW)
+
+    def sb_row_at(self, my):
+        """node index of the sidebar row at pixel y, or -1"""
+        if my < SB_TITLE_H:
+            return -1
+        i = (my - SB_TITLE_H) // SB_ROW + self.sb_scroll
+        return i if 0 <= i < self.n else -1
+
     # ------------------------------------------------------------ per-frame
 
     def update_hover(self):
+        if self.sidebar and self.mouse[0] < SB_W:
+            self.hover_idx = -1
+            self.sb_hover = self.sb_row_at(self.mouse[1])
+            return
+        self.sb_hover = -1
         wx, wy = self.cam.to_world(*self.mouse)
         d = np.hypot(self.pos[:, 0] - wx, self.pos[:, 1] - wy)
+        d[~self.visible] = np.inf
         i = int(np.argmin(d)) if self.n else -1
         r = node_radius(self.univ, i, self.dmax) + 1.5 / self.cam.scale
         self.hover_idx = i if self.n and d[i] <= r else -1
 
     def step_physics(self):
-        moved = self.pinned.copy()
-        if self.drag_idx >= 0:
-            moved[self.drag_idx] = True
+        act = self.active
+        if not len(act):
+            return
+        sub = self.pos[act]
+        pin_l = self.pinned[act]
+        pin_pos_l = self.pin_pos[act]
+        drag_l = -1
+        if self.drag_idx >= 0 and self.visible[self.drag_idx]:
+            drag_l = int(np.searchsorted(act, self.drag_idx))
             wx, wy = self.cam.to_world(*self.mouse)
-            self.pos[self.drag_idx] = (wx, wy)
+            sub[drag_l] = (wx, wy)
         for _ in range(self.args.steps):
-            fr_step(self.pos, self.univ["src"], self.univ["dst"],
-                    self.k, self.temp)
-            self.pos[self.pinned] = self.pin_pos[self.pinned]
-            if self.drag_idx >= 0:
-                self.pos[self.drag_idx] = self.cam.to_world(*self.mouse)
+            fr_step(sub, self.asrc, self.adst, self.k, self.temp)
+            sub[pin_l] = pin_pos_l[pin_l]
+            if drag_l >= 0:
+                sub[drag_l] = self.cam.to_world(*self.mouse)
+        self.pos[act] = sub   # self.pos[act] is a copy; write results back
 
     # ------------------------------------------------------------ drawing
 
@@ -325,9 +401,9 @@ class App:
         cam = self.cam
         pts = cam.to_screen(self.pos).astype(np.int32)
 
-        # edges
+        # edges (only between visible nodes)
         ec = EDGE_COLOR
-        src, dst = self.univ["src"], self.univ["dst"]
+        src, dst = self.active_edges
         for a, b in zip(src, dst):
             pygame.draw.line(scr, ec, pts[a], pts[b], 1)
 
@@ -335,6 +411,8 @@ class App:
         info = self.univ["info"]
         names = self.univ["names"]
         for i in range(self.n):
+            if not self.visible[i]:
+                continue
             r = max(node_radius(self.univ, i, self.dmax) * cam.scale, 1.0)
             col = ROLE_RGB.get(info[names[i]]["role"], UNKNOWN_RGB) \
                 if names[i] in info else UNKNOWN_RGB
@@ -348,15 +426,23 @@ class App:
             r = max(node_radius(self.univ, i, self.dmax) * cam.scale, 2.0)
             pygame.draw.circle(scr, HOVER_RING, pts[i], int(r) + 3, 2)
             self.draw_tooltip(i, pts[i])
+        elif self.sb_hover >= 0:      # hovered sidebar row -> locate node
+            i = self.sb_hover
+            r = max(node_radius(self.univ, i, self.dmax) * cam.scale, 2.0)
+            pygame.draw.circle(scr, HOVER_RING, pts[i], int(r) + 3, 2)
 
         # labels for top-degree nodes (only once they're readable)
         for i in self.labeled:
+            if not self.visible[i]:
+                continue
             r = node_radius(self.univ, i, self.dmax) * cam.scale
             if r < 6 or (i == self.hover_idx):
                 continue
             surf = self.font_small.render(names[i], True, TEXT)
             scr.blit(surf, (pts[i][0] + int(r) + 3, pts[i][1] - surf.get_height() // 2))
 
+        if self.sidebar:
+            self.draw_sidebar()
         self.draw_hud()
 
     def draw_bands(self):
@@ -364,6 +450,8 @@ class App:
         scr, cam = self.screen, self.cam
         seen = {}
         for i, s in enumerate(self.univ["names"]):
+            if not self.visible[i]:
+                continue
             n = self.univ["info"].get(s)
             if n and n["level"] >= 0:
                 seen.setdefault(n["level"], self.pos[i][1])
@@ -374,6 +462,8 @@ class App:
                 scr.blit(surf, (4, sy + 3))
                 pygame.draw.line(scr, (46, 50, 58), (0, sy), (cam.w, sy), 1)
         for i, s in enumerate(self.univ["names"]):
+            if not self.visible[i]:
+                continue
             n = self.univ["info"].get(s)
             if n and n["level"] < 0:
                 sy = int(cam.h / 2 - (self.pos[i][1] + 4.5 - cam.cy) * cam.scale)
@@ -409,9 +499,58 @@ class App:
                                   if name in info else TEXT)
             scr.blit(self.font.render(l, True, col), (x + 7, y + 6 + j * 16))
 
+    def draw_sidebar(self):
+        """Left panel: directory-style list of all nodes; click to toggle"""
+        scr, cam = self.screen, self.cam
+        rows = self.sb_rows()
+        self.sb_scroll = max(0, min(self.sb_scroll, self.n - rows))
+        pygame.draw.rect(scr, PANEL, (0, 0, SB_W, cam.h))
+        pygame.draw.line(scr, (70, 76, 86), (SB_W - 1, 0), (SB_W - 1, cam.h))
+
+        vis = int(self.visible.sum())
+        title = self.font_small.render(
+            f"nodes {vis}/{self.n}   click: show/hide", True, DIM)
+        scr.blit(title, (8, 8))
+
+        names, info, deg = self.univ["names"], self.univ["info"], self.univ["degree"]
+        for k in range(self.sb_scroll, min(self.n, self.sb_scroll + rows)):
+            y = SB_TITLE_H + (k - self.sb_scroll) * SB_ROW
+            if k == self.sb_hover:
+                pygame.draw.rect(scr, (44, 50, 60), (2, y, SB_W - 4, SB_ROW))
+            nm = names[k]
+            ninfo = info.get(nm)
+            col = ROLE_RGB.get(ninfo["role"], UNKNOWN_RGB) if ninfo else UNKNOWN_RGB
+            bx, by = 10, y + (SB_ROW - 10) // 2
+            if self.visible[k]:
+                pygame.draw.rect(scr, col, (bx, by, 10, 10), border_radius=2)
+            else:
+                pygame.draw.rect(scr, (90, 96, 104), (bx, by, 10, 10), 1,
+                                 border_radius=2)
+            text = nm
+            while self.font_small.size(text)[0] > SB_W - 16 - 10 - 44 and len(text) > 4:
+                text = text[:-2]
+            if text != nm:
+                text += "\u2026"
+            name_col = TEXT if self.visible[k] else (108, 112, 120)
+            surf = self.font_small.render(text, True, name_col)
+            scr.blit(surf, (bx + 16, y + (SB_ROW - surf.get_height()) // 2))
+            d = self.font_small.render(str(int(deg[k])), True, DIM)
+            scr.blit(d, (SB_W - 10 - d.get_width(),
+                         y + (SB_ROW - d.get_height()) // 2))
+
+        # scrollbar, if the list does not fit
+        if self.n > rows:
+            track_y0, track_y1 = SB_TITLE_H + 2, cam.h - 4
+            frac = self.sb_scroll / self.n
+            bar_h = max(20, (track_y1 - track_y0) * rows // self.n)
+            bar_y = track_y0 + frac * (track_y1 - track_y0 - bar_h)
+            pygame.draw.rect(scr, (60, 66, 76),
+                             (SB_W - 6, bar_y, 4, bar_h), border_radius=2)
+
     def draw_hud(self):
         scr, cam = self.screen, self.cam
         u = self.univ
+        ox = SB_W if self.sidebar else 0
         parts = []
         if self.summary:
             parts.append(f"{self.summary['file']}: {self.summary['nodes']} nodes, "
@@ -423,10 +562,12 @@ class App:
                      f"{'on' if self.physics else 'off'} | {self.fps:.0f} fps")
         if self.verdict:
             parts.append(self.verdict)
+        if self.warning:
+            parts.append(self.warning)
         if self.delta:
             parts.append(self.delta)
         for j, p in enumerate(parts):
-            scr.blit(self.font_big.render(p, True, TEXT), (8, 6 + j * 18))
+            scr.blit(self.font_big.render(p, True, TEXT), (ox + 8, 6 + j * 18))
 
         # legend, top right
         x = cam.w - 10
@@ -448,10 +589,10 @@ class App:
                      "P: pin/unpin hovered node",
                      "drag space / RMB: pan    wheel: zoom",
                      "L: force/level   SPACE: pause physics   R: re-seed",
-                     "H: help   S: screenshot   Q/ESC: quit"]
+                     "N: node list   H: help   S: screenshot   Q/ESC: quit"]
             for j, l in enumerate(lines):
                 scr.blit(self.font_small.render(l, True, DIM),
-                         (8, cam.h - 14 - (len(lines) - j) * 15))
+                         (ox + 8, cam.h - 14 - (len(lines) - j) * 15))
 
     # ------------------------------------------------------------ run
 
@@ -483,7 +624,7 @@ def read_input(args):
         return sys.stdin.read() if args.input == "-" else open(args.input).read()
     if not os.access(args.tern, os.X_OK):
         sys.exit(f"error: {args.tern} not executable")
-    cmd = [args.tern, args.input]
+    cmd = [args.tern] + (["--keep-external"] if args.keep_external else []) + [args.input]
     if args.baseline:
         cmd.append(args.baseline)
     return subprocess.run(cmd, capture_output=True, text=True, check=True).stdout
@@ -495,6 +636,9 @@ def main():
     ap.add_argument("baseline", nargs="?")
     ap.add_argument("--raw", action="store_true")
     ap.add_argument("--tern", default="./tern")
+    ap.add_argument("--keep-external", action="store_true",
+                    help="pass --keep-external to tern (wire declare-only libc "
+                         "externals like malloc/fprintf into the graph)")
     ap.add_argument("--layout", choices=["force", "level"], default="force")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--iterations", type=int, default=150,
@@ -509,7 +653,7 @@ def main():
     args = ap.parse_args()
 
     text = read_input(args)
-    nodes, edges, summary, delta, verdict = parse_tern_output(text)
+    nodes, edges, summary, delta, verdict, warning = parse_tern_output(text)
     if args.layout == "force" and not edges:
         print("note: no EDGE lines in input; using level layout")
         args.layout = "level"
@@ -520,7 +664,7 @@ def main():
     else:
         pos = level_positions(univ)
 
-    App(univ, pos, args.layout, summary, delta, verdict, args).run(
+    App(univ, pos, args.layout, summary, delta, verdict, warning, args).run(
         int(os.environ.get("TERN_VIEW_MAX_FRAMES", "0")))
 
 

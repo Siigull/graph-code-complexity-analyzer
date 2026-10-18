@@ -60,8 +60,9 @@ SUMMARY_RE = re.compile(
 
 
 def parse_tern_output(text):
-    """Parse ./tern stdout into (nodes, edges, summary, delta, verdict)."""
+    """Parse ./tern stdout into (nodes, edges, summary, delta, verdict, warning)."""
     nodes, edges, summary, delta, verdict = [], [], None, None, None
+    warning = None
     for line in text.splitlines():
         if HEADER_RE.match(line) or set(line.strip()) == {"-"}:
             continue
@@ -91,12 +92,14 @@ def parse_tern_output(text):
             delta = line.strip()
         elif line.startswith("VERDICT:"):
             verdict = line.strip()
+        elif line.startswith("WARNING:"):
+            warning = line.strip()
     if not nodes:
         if delta or verdict:
             sys.exit("error: tern ran in delta mode and printed no node table; "
                      "invoke with a single .ll to get a plottable graph")
         sys.exit("error: no graph table found - is this really ./tern output?")
-    return nodes, edges, summary, delta, verdict
+    return nodes, edges, summary, delta, verdict, warning
 
 
 # ---------------------------------------------------------------- level layout
@@ -285,7 +288,7 @@ def render_force(nodes, edges, ax, seed, edge_alpha, iterations):
 
 # ---------------------------------------------------------------- common
 
-def render(nodes, edges, summary, delta, verdict, out, show, dpi, label_top,
+def render(nodes, edges, summary, delta, verdict, warning, out, show, dpi, label_top,
            layout, seed, edge_alpha, iterations):
     use_agg = not show
     if use_agg:
@@ -321,6 +324,8 @@ def render(nodes, edges, summary, delta, verdict, out, show, dpi, label_top,
         title = "tern graph"
     if delta:
         title += f"\n{delta}"
+    if warning:
+        title += f"\n{warning}"
     if verdict:
         title += f"  --  {verdict}"
     ax.set_title(title, fontsize=11)
@@ -347,6 +352,9 @@ def main():
     ap.add_argument("--raw", action="store_true",
                     help="treat INPUT as a pre-captured ./tern output file")
     ap.add_argument("--tern", default="./tern", help="path to tern binary")
+    ap.add_argument("--keep-external", action="store_true",
+                    help="pass --keep-external to tern (wire declare-only libc "
+                         "externals like malloc/fprintf into the graph)")
     ap.add_argument("--layout", choices=["force", "level"], default="force",
                     help="spatial force-directed (default) or level bands")
     ap.add_argument("-o", "--out", default=None, help="output image (default tern_graph.png)")
@@ -368,14 +376,14 @@ def main():
     else:
         if not os.access(args.tern, os.X_OK):
             sys.exit(f"error: {args.tern} not executable")
-        cmd = [args.tern, args.input]
+        cmd = [args.tern] + (["--keep-external"] if args.keep_external else []) + [args.input]
         if args.baseline:
             cmd.append(args.baseline)
         text = subprocess.run(cmd, capture_output=True, text=True, check=True).stdout
 
-    nodes, edges, summary, delta, verdict = parse_tern_output(text)
+    nodes, edges, summary, delta, verdict, warning = parse_tern_output(text)
     out = args.out or "tern_graph.png"
-    render(nodes, edges, summary, delta, verdict, out, args.show, args.dpi,
+    render(nodes, edges, summary, delta, verdict, warning, out, args.show, args.dpi,
            args.labels, args.layout, args.seed, args.edge_alpha, args.iterations)
 
 

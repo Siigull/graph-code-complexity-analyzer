@@ -179,8 +179,16 @@ static void collapse_linear_blocks(Raw_Graph *raw) {
 
 
 int main(int argc, char **argv) {
-    if (argc < 2) {
-        fprintf(stderr, "Usage: %s <current.ll> [baseline.ll]\n", argv[0]);
+    int keep_external = 0, npos = 0;
+    const char *pos[2] = {NULL, NULL};
+
+    for (int i = 1; i < argc; i++) {
+        if (!strcmp(argv[i], "--keep-external")) keep_external = 1;
+        else if (npos < 2) pos[npos++] = argv[i];
+        else { fprintf(stderr, "Usage: %s [--keep-external] <current.ll> [baseline.ll]\n", argv[0]); return 1; }
+    }
+    if (npos < 1) {
+        fprintf(stderr, "Usage: %s [--keep-external] <current.ll> [baseline.ll]\n", argv[0]);
         return 1;
     }
 
@@ -190,11 +198,11 @@ int main(int argc, char **argv) {
         fprintf(stderr, "OOM, tried to alloc %ld bytes", sizeof(Snapshot));
         exit(1);
     }
-    memcpy(&cur->filename, argv[1], MIN(strlen(argv[1]), 49));
-    parse_ll(&cur->raw, argv[1]);
+    memcpy(&cur->filename, pos[0], MIN(strlen(pos[0]), 49));
+    parse_ll(&cur->raw, pos[0], keep_external);
     analyze(&cur->raw, &cur->metrics);
 
-    if (argc == 2) {
+    if (npos == 1) {
         print_graph(cur);
     
     } else {
@@ -204,8 +212,8 @@ int main(int argc, char **argv) {
             fprintf(stderr, "OOM, tried to alloc %ld bytes", sizeof(Snapshot));
             exit(1);
         }
-        memcpy(&base->filename, argv[2], MIN(strlen(argv[2]), 49));
-        parse_ll(&base->raw, argv[2]);
+        memcpy(&base->filename, pos[1], MIN(strlen(pos[1]), 49));
+        parse_ll(&base->raw, pos[1], keep_external);
         analyze(&base->raw, &base->metrics);
 
         print_graph_dif(cur, base);
@@ -253,8 +261,9 @@ void print_graph(Snapshot* g) {
     }
 
     printf("------------------------------------------------------------------------------------------------------------------------------\n");
-    printf("SUMMARY [%s]: Nodes=%d | Edges=%d | MaxSCC=%d | CyclicNodes=%d | PropCost=%.2f%%\n",
-           g->filename, r->n, m->edges, m->max_scc, m->cyc_nodes, m->prop_cost);
+    printf("SUMMARY [%s]: Nodes=%d | Edges=%d | MaxSCC=%d | CyclicNodes=%d | PropCost=%.2f%% | ExtRefs=%s\n",
+           g->filename, r->n, m->edges, m->max_scc, m->cyc_nodes, m->prop_cost,
+           r->kept_external ? "kept" : "dropped");
 
     for (int i = 0; i < r->n; i++)
         for (int j = 0; j < r->n; j++)
@@ -275,6 +284,11 @@ void print_graph_dif(Snapshot* new, Snapshot* base) {
 
     printf("DELTA vs [%s]: dNodes=%+d | dEdges=%+d | dCyclic=%+d | dPropCost=%+.2f%%\n",
             base->filename, r->n - base->raw.n, m->edges - bm->edges, d_cyc, d_pc);
+    if (r->kept_external != base->raw.kept_external)
+        printf("WARNING: ExtRefs mode mismatch (current=%s, baseline=%s); "
+               "dNodes/dEdges partly count declare-only externals, not structure\n",
+               r->kept_external ? "kept" : "dropped",
+               base->raw.kept_external ? "kept" : "dropped");
     if (d_cyc > 0 || m->max_scc > bm->max_scc)
         printf("VERDICT: BANDAGE DETECTED (New cyclic entanglement introduced)\n");
     else if (d_cyc < 0 || (r->n >= base->raw.n && d_pc < -0.5))

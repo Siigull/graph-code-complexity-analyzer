@@ -52,7 +52,74 @@ static void mk_node_name(char *out, const char *fn, const char *block) {
 }
 
 
-void parse_ll(Raw_Graph *raw, const char *path) {
+/* Set of symbol names, used for the module-defined lookup in pass 1. */
+typedef struct {
+    int n;
+    char name[MAXV][SYMLEN];
+} Sym_Set;
+
+static void set_add(Sym_Set *s, const char *sym) {
+    for (int i = 0; i < s->n; i++)
+        if (!strcmp(s->name[i], sym)) return;
+    if (s->n < MAXV) {
+        snprintf(s->name[s->n], SYMLEN, "%s", sym);
+        s->n++;
+    }
+}
+
+static int set_has(const Sym_Set *s, const char *sym) {
+    for (int i = 0; i < s->n; i++)
+        if (!strcmp(s->name[i], sym)) return 1;
+    return 0;
+}
+
+
+/* Pass 1: collect every symbol *defined* in this module: "define"d functions
+ * and module-level globals ("@name = ..."). declare-only externals (malloc,
+ * fprintf, @stdout, ...) are deliberately excluded so pass 2 can skip wiring
+ * them as architectural dead weight. */
+static void collect_defined(const char *path, Sym_Set *d) {
+    FILE *f = fopen(path, "r");
+    if (!f) { perror(path); exit(1); }
+
+    char line[4096], sym[SYMLEN];
+    d->n = 0;
+
+    while (fgets(line, sizeof(line), f)) {
+        char *semi = strchr(line, ';');
+        if (semi) *semi = '\0';
+        char *p = line;
+        while (isspace((unsigned char)*p)) p++;
+
+        if (!strncmp(p, "define ", 7)) {
+            char *at = strchr(p, '@'), *br = strchr(p, '{');
+            if (at && br) {
+                read_sym(at + 1, sym);
+                if (sym[0]) set_add(d, sym);
+            }
+        } else if (*p == '@') {
+            /* module-level global/alias/constant: "@name = initializer".
+             * "@name = external global" is a declare-style import: skip it. */
+            char *eq = strchr(p, '=');
+            if (eq) {
+                char *q = eq + 1;
+                while (isspace((unsigned char)*q)) q++;
+                if (strncmp(q, "external", 8) == 0) continue;
+                read_sym(p + 1, sym);
+                if (sym[0]) set_add(d, sym);
+            }
+        }
+    }
+    fclose(f);
+}
+
+
+void parse_ll(Raw_Graph *raw, const char *path, int keep_external) {
+    raw->kept_external = keep_external;
+    
+    static Sym_Set defined;
+    if (!keep_external) collect_defined(path, &defined);
+
     FILE *f = fopen(path, "r");
     if (!f) { perror(path); exit(1); }
     char line[4096], fn[SYMLEN] = "", sym[SYMLEN], node_name[SYMLEN];
@@ -95,6 +162,9 @@ void parse_ll(Raw_Graph *raw, const char *path) {
             for (char *q = p; (q = strchr(q, '@')) != NULL; ) {
                 q = (char *)read_sym(q + 1, sym);
                 if (!sym[0] || sym[0] == '.' || !strncmp(sym, "llvm.", 5)) continue;
+                /* Default: only wire symbols defined in this module; skip
+                 * declare-only libc/OS externals unless --keep-external. */
+                if (!keep_external && !set_has(&defined, sym)) continue;
                 mk_node_name(node_name, sym, "entry");
                 int dst = sym_id(raw, node_name);
                 if (dst != cur) raw->E[cur][dst] = 1;
