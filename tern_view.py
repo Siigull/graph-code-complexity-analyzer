@@ -101,6 +101,14 @@ def initial_force_positions(univ, seed, iterations):
     return (pos * WORLD).astype(np.float64)
 
 
+def center_positions(univ, seed):
+    """All nodes bunched at the center with a tiny random jitter so the
+    repulsion has a direction; springs are off for the first frames."""
+    rng = np.random.default_rng(seed)
+    return np.full((len(univ["names"]), 2), WORLD / 2.0) \
+        + rng.uniform(-2.0, 2.0, (len(univ["names"]), 2))
+
+
 def level_positions(univ):
     """Level-band layout in world coords; unknown endpoints get stacked
     in the 'other' column next to their highest-level table neighbor."""
@@ -267,6 +275,7 @@ class App:
 
         self.cam = Camera(args.width, args.height)
         self.physics = layout == "force"
+        self.intro = 0             # frames of connection-free repulsion left (E)
         self.temp = 0.45            # interactive temperature, world units
         self.drag_idx = -1
         self.hover_idx = -1
@@ -277,6 +286,10 @@ class App:
         self.help = True
         self.pinned = np.zeros(self.n, dtype=bool)
         self.pin_pos = np.zeros((self.n, 2))
+
+        # live physics tuning: TAB selects a parameter, [ ] adjusts it
+        self.phys_params = ("temp", "k", "steps")
+        self.phys_sel = 0
 
         # node-list sidebar (N to toggle); hidden nodes are excluded from
         # drawing, edges, hover and the physics simulation
@@ -314,11 +327,22 @@ class App:
                         self.pos = initial_force_positions(
                             self.univ, random.randrange(1 << 30),
                             self.args.iterations)
+                elif ev.key == pygame.K_e:
+                    if self.layout == "force":   # explode from center, springs
+                        self.pos = center_positions(  # re-attach after 1.5s
+                            self.univ, random.randrange(1 << 30))
+                        self.intro = 90
+                        self.physics = True
+                elif ev.key == pygame.K_TAB:
+                    self.phys_sel = (self.phys_sel + 1) % len(self.phys_params)
+                elif ev.key in (pygame.K_LEFTBRACKET, pygame.K_RIGHTBRACKET):
+                    self.adjust_phys(-1 if ev.key == pygame.K_LEFTBRACKET else 1)
                 elif ev.key == pygame.K_l:
                     self.layout = "level" if self.layout == "force" else "force"
                     self.pos = (level_positions(self.univ) if self.layout == "level"
                                 else initial_force_positions(
                                     self.univ, self.args.seed, self.args.iterations))
+                    self.intro = 0
                     self.physics = self.layout == "force"
                 elif ev.key == pygame.K_h:
                     self.help = not self.help
@@ -452,6 +476,16 @@ class App:
         r = node_radius(self.univ, i, self.dmax) + 1.5 / self.cam.scale
         self.hover_idx = i if self.n and d[i] <= r else -1
 
+    def adjust_phys(self, d):
+        """Multiply the selected physics parameter by 1.25 (or 0.8)."""
+        name = self.phys_params[self.phys_sel]
+        if name == "temp":
+            self.temp = min(max(self.temp * (1.25 if d > 0 else 0.8), 0.01), 10.0)
+        elif name == "k":
+            self.k = min(max(self.k * (1.25 if d > 0 else 0.8), 1.0), 100.0)
+        else:   # steps: integer add/sub
+            self.args.steps = min(max(self.args.steps + d, 1), 10)
+
     def step_physics(self):
         act = self.active
         if not len(act):
@@ -465,7 +499,10 @@ class App:
             wx, wy = self.cam.to_world(*self.mouse)
             sub[drag_l] = (wx, wy)
         for _ in range(self.args.steps):
-            fr_step(sub, self.asrc, self.adst, self.k, self.temp)
+            if self.intro > 0:      # explosion phase: no connections yet
+                fr_step(sub, self.asrc[:0], self.adst[:0], self.k, self.temp)
+            else:
+                fr_step(sub, self.asrc, self.adst, self.k, self.temp)
             sub[pin_l] = pin_pos_l[pin_l]
             if drag_l >= 0:
                 sub[drag_l] = self.cam.to_world(*self.mouse)
@@ -657,6 +694,11 @@ class App:
             parts.append(f"{self.n} nodes, {len(u['src'])} edges")
         parts.append(f"{self.layout} layout | physics "
                      f"{'on' if self.physics else 'off'} | {self.fps:.0f} fps")
+        vals = (f"temp {self.temp:.2f}", f"k {self.k:.1f}",
+                f"steps {self.args.steps}")
+        parts.append("physics: " + "  ".join(
+            f"[{v}]" if i == self.phys_sel else v
+            for i, v in enumerate(vals)) + "  (TAB select, [ ] adjust)")
         if self.verdict:
             parts.append(self.verdict)
         if self.warning:
@@ -685,7 +727,8 @@ class App:
             lines = ["drag node: move it (springs pull neighbors)",
                      "P: pin/unpin hovered node",
                      "drag space / RMB: pan    wheel: zoom",
-                     "L: force/level   SPACE: pause physics   R: re-seed",
+                     "L: force/level   SPACE: pause physics   R: re-seed   E: explode",
+                     "TAB: select physics param   [ ]: decrease/increase it",
                      "N: node list   click node: locate in list   H: help   S: screenshot   Q/ESC: quit"]
             for j, l in enumerate(lines):
                 scr.blit(self.font_small.render(l, True, DIM),
@@ -700,6 +743,8 @@ class App:
             self.update_hover()
             if self.physics and self.layout == "force":
                 self.step_physics()
+                if self.intro > 0:
+                    self.intro -= 1
             elif self.drag_idx >= 0:   # dragging works even with physics paused
                 wx, wy = self.cam.to_world(*self.mouse)
                 self.pos[self.drag_idx] = (wx, wy)

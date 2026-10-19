@@ -1,0 +1,1033 @@
+SYMBOL                                                                                                                            Ca   Ce  BLAST   SCC  LEVEL  STRUCTURAL_ROLE
+------------------------------------------------------------------------------------------------------------------------------
+scratch_buffer_init:entry                                                                                                          1    1      5     1     L1  INTERNAL
+da_init:entry                                                                                                                      1    0      6     1     L0  SINK_ABSTRACTION
+scratch_buffer_append:entry                                                                                                        1    1     23     1     L2  INTERNAL
+da_append_base:entry                                                                                                               2    1     25     1     L1  INTERNAL
+scratch_buffer_appendv:entry                                                                                                       0    1      0     1     L2  ENTRY_ROOT
+scratch_buffer_elem_at:entry                                                                                                       3    1     49     1     L2  INTERNAL
+da_elem_at:entry                                                                                                                   1    1     50     1     L1  INTERNAL
+scratch_buffer_delete:entry                                                                                                        2    1      9     1     L2  INTERNAL
+da_delete:entry                                                                                                                    1    1     10     1     L1  INTERNAL
+assertion_handler:entry                                                                                                            3    0     56     1     L0  SINK_ABSTRACTION
+da_grow_cap:entry                                                                                                                  1    0     26     1     L0  SINK_ABSTRACTION
+initialize_allocator:entry                                                                                                         1    2      1     1     L1  INTERNAL
+__func__.initialize_allocator:entry                                                                                                1    0      2     1     L0  SINK_ABSTRACTION
+alloc_buffer:entry                                                                                                                 2    0     60     1     L0  SINK_ABSTRACTION
+delete_allocator:entry                                                                                                             1    2      1     1     L2  INTERNAL
+__func__.delete_allocator:entry                                                                                                    1    0      2     1     L0  SINK_ABSTRACTION
+delete_buffer:entry                                                                                                                1    1      2     1     L1  INTERNAL
+__func__.delete_buffer:entry                                                                                                       1    0      3     1     L0  SINK_ABSTRACTION
+alloc_non_zeroed:entry                                                                                                             3    3     57     1     L2  PASS_THROUGH_HUB
+__func__.alloc_non_zeroed:entry                                                                                                    1    0     58     1     L0  SINK_ABSTRACTION
+align:entry                                                                                                                        2    0     74     1     L0  SINK_ABSTRACTION
+initialize_buffer:entry                                                                                                            1    2     58     1     L1  INTERNAL
+__func__.initialize_buffer:entry                                                                                                   1    0     59     1     L0  SINK_ABSTRACTION
+alloc:entry                                                                                                                        4    1     55     1     L3  INTERNAL
+alloc_non_zeroed_temp:entry                                                                                                        2    0      2     1     L0  SINK_ABSTRACTION
+alloc_temp:entry                                                                                                                   0    1      0     1     L1  ENTRY_ROOT
+libc_alloc_proc:entry+libc_free_proc:entry                                                                                         3    0      9     1     L0  SINK_ABSTRACTION
+scratch_alloc_proc:entry                                                                                                           2    4     18     1     L4  PASS_THROUGH_HUB
+scratch_allocator_new_buffer:entry                                                                                                 2    1     22     1     L3  INTERNAL
+scratch_free_proc:entry                                                                                                            2    0     18     1     L0  SINK_ABSTRACTION
+scratch_allocator_init:entry                                                                                                       2    3      4     1     L4  PASS_THROUGH_HUB
+scratch_allocator_release:entry                                                                                                    3    2      5     1     L3  PASS_THROUGH_HUB
+scratch_allocator_get_state:entry                                                                                                 14    0     35     1     L0  SINK_ABSTRACTION
+scratch_allocator_reset:entry                                                                                                     15    1     36     1     L3  INTERNAL
+scratch_buffer_init.2:entry+sb_init:entry+node_array_init:entry                                                                    0    1      0     1     L1  ENTRY_ROOT
+da_init.19:entry                                                                                                                   2    0      4     1     L0  SINK_ABSTRACTION
+scratch_buffer_append.3:entry+scratch_buffer_appendv.4:entry+sb_append:entry+sb_appendv:entry+node_array_append:entry+node_arra    0    1      0     1     L2  ENTRY_ROOT
+da_append_base.17:entry                                                                                                            2    1      7     1     L1  INTERNAL
+scratch_buffer_elem_at.5:entry+sb_elem_at:entry+node_array_elem_at:entry                                                           0    1      0     1     L2  ENTRY_ROOT
+da_elem_at.14:entry                                                                                                                2    1      4     1     L1  INTERNAL
+scratch_buffer_delete.6:entry+sb_delete:entry+node_array_delete:entry                                                              0    1      0     1     L2  ENTRY_ROOT
+da_delete.7:entry                                                                                                                  2    1      4     1     L1  INTERNAL
+scope_stack_buffer_init:entry                                                                                                      1    1      2     1     L1  INTERNAL
+scope_stack_buffer_append:entry                                                                                                    2    1      5     1     L2  INTERNAL
+scope_stack_buffer_elem_at:entry                                                                                                   1    1      2     1     L2  INTERNAL
+scope_stack_buffer_delete:entry                                                                                                    1    1      2     1     L2  INTERNAL
+assertion_handler.12:entry                                                                                                         4    0     12     1     L0  SINK_ABSTRACTION
+da_grow_cap.18:entry                                                                                                               1    0      8     1     L0  SINK_ABSTRACTION
+make_node:entry                                                                                                                   16    2     46     1     L4  PASS_THROUGH_HUB
+AST_SIZES:entry                                                                                                                    1    0     47     1     L0  SINK_ABSTRACTION
+construct_node_Getter:entry                                                                                                        1    2      1     1     L6  INTERNAL
+make_node_Getter:entry                                                                                                             1    1      2     1     L5  INTERNAL
+make_node_Ident:entry                                                                                                              7    1     22     1     L5  INTERNAL
+construct_node_Setter:entry                                                                                                        1    2      1     1     L6  INTERNAL
+make_node_Setter:entry                                                                                                             1    1      2     1     L5  INTERNAL
+construct_node_Method:entry                                                                                                        1    3      1     1     L6  INTERNAL
+make_node_Method:entry                                                                                                             1    1      2     1     L5  INTERNAL
+node_slice_copy_buffer:entry                                                                                                       4    1     19     1     L3  INTERNAL
+construct_node_Block_Stmt:entry                                                                                                    1    2      6     1     L6  INTERNAL
+make_node_Block_Stmt:entry                                                                                                         1    1      7     1     L5  INTERNAL
+construct_node_Program:entry                                                                                                       1    1      1     1     L6  INTERNAL
+make_node_Program_Skelet:entry                                                                                                     1    1      2     1     L5  INTERNAL
+construct_node_Var_Decl:entry                                                                                                      1    2      7     1     L6  INTERNAL
+make_node_Var_Decl:entry                                                                                                           1    1      8     1     L5  INTERNAL
+construct_node_If_Stmt:entry                                                                                                       1    1      6     1     L6  INTERNAL
+make_node_If_Stmt:entry                                                                                                            1    1      7     1     L5  INTERNAL
+construct_node_While_Stmt:entry                                                                                                    1    1      6     1     L6  INTERNAL
+make_node_While_Stmt:entry                                                                                                         1    1      7     1     L5  INTERNAL
+construct_node_Return_Stmt:entry                                                                                                   2    1      7     1     L6  INTERNAL
+make_node_Return_Stmt:entry                                                                                                        1    1      8     1     L5  INTERNAL
+construct_node_Assign_Stmt:entry                                                                                                   1    2      7     1     L6  INTERNAL
+make_node_Assign_Stmt:entry                                                                                                        1    1      8     1     L5  INTERNAL
+construct_node_Call_Expr:entry                                                                                                     1    3     15     1     L6  INTERNAL
+make_node_Call_Expr:entry                                                                                                          1    1     16     1     L5  INTERNAL
+construct_node_Builtin_Call_Expr:entry                                                                                             1    3     15     1     L6  INTERNAL
+make_node_Builtin_Call_Expr:entry                                                                                                  1    1     16     1     L5  INTERNAL
+construct_node_Binary_Expr:entry                                                                                                   1    1     15     1     L6  INTERNAL
+make_node_Binary_Expr:entry                                                                                                        1    1     16     1     L5  INTERNAL
+construct_node_Literal:entry                                                                                                       2    1     16     1     L6  INTERNAL
+make_node_Literal:entry                                                                                                            1    1     17     1     L5  INTERNAL
+init_scope_stack:entry                                                                                                             1    6      1     1     L5  INTERNAL
+libc_allocator:entry                                                                                                               1    1      2     1     L1  INTERNAL
+init_symbol_table:entry                                                                                                            5    0     16     1     L0  SINK_ABSTRACTION
+delete_scope_stack:entry                                                                                                           1    4      1     1     L4  INTERNAL
+delete_symbol_table:entry                                                                                                          3    0      3     1     L0  SINK_ABSTRACTION
+begin_scope:entry                                                                                                                  1    4      3     1     L6  INTERNAL
+scratch_allocator:entry                                                                                                            1    2      4     1     L5  INTERNAL
+end_scope:entry                                                                                                                    1    2      3     1     L4  INTERNAL
+scratch_buffer_init.24:entry+sb_init.29:entry+node_array_init.34:entry+scope_stack_buffer_init.39:entry+gss_init:entry+da_init.    0    0      0     1     L0  INTERNAL
+scratch_buffer_append.25:entry                                                                                                     1    1      6     1     L2  INTERNAL
+da_append_base.90:entry                                                                                                            3    1     17     1     L1  INTERNAL
+scratch_buffer_appendv.26:entry+sb_append.30:entry+sb_appendv.31:entry+node_array_append.35:entry+node_array_appendv.36:entry+s    0    1      0     1     L2  ENTRY_ROOT
+scratch_buffer_elem_at.27:entry+sb_elem_at.32:entry+node_array_elem_at.37:entry+scope_stack_buffer_elem_at.42:entry                0    1      0     1     L2  ENTRY_ROOT
+da_elem_at.89:entry                                                                                                                2    1     38     1     L1  INTERNAL
+scratch_buffer_delete.28:entry+sb_delete.33:entry+node_array_delete.38:entry+scope_stack_buffer_delete.43:entry                    0    1      0     1     L2  ENTRY_ROOT
+da_delete.88:entry                                                                                                                 2    1      5     1     L1  INTERNAL
+gss_append:entry                                                                                                                   1    1     10     1     L2  INTERNAL
+gss_elem_at:entry                                                                                                                  6    1     36     1     L2  INTERNAL
+gss_delete:entry                                                                                                                   1    1      3     1     L2  INTERNAL
+rt_add:entry+rt_sub:entry+rt_div:entry                                                                                             1    6     26    17  CYCLE  CYCLE_TRAP
+operand_label_indexed:entry                                                                                                       12    2     27     1     L1  PASS_THROUGH_HUB
+rt_binary_op_prologue:entry                                                                                                        5   12     26    17  CYCLE  CYCLE_TRAP
+print_operand:entry                                                                                                               21    0     33     1     L0  SINK_ABSTRACTION
+RT_TEMP2:entry                                                                                                                     9    0     29     1     L0  SINK_ABSTRACTION
+RT_TEMP1:entry                                                                                                                    10    0     29     1     L0  SINK_ABSTRACTION
+operand_literal_int:entry                                                                                                         10    1     27     1     L1  INTERNAL
+rt_mul:entry                                                                                                                       1    9     26    17  CYCLE  CYCLE_TRAP
+operand_temp:entry                                                                                                                 8    1     30     1     L1  INTERNAL
+operand_literal_string:entry                                                                                                       5    2     28     1     L3  PASS_THROUGH_HUB
+operand_literal_bool:entry                                                                                                         9    0     28     1     L0  SINK_ABSTRACTION
+rt_eq:entry                                                                                                                        2    6     26    17  CYCLE  CYCLE_TRAP
+rt_neq:entry                                                                                                                       1    1     26    17  CYCLE  CYCLE_TRAP
+rt_lt:entry                                                                                                                        2    6     26    17  CYCLE  CYCLE_TRAP
+rt_gt:entry                                                                                                                        2    6     26    17  CYCLE  CYCLE_TRAP
+rt_lte:entry                                                                                                                       1    1     26    17  CYCLE  CYCLE_TRAP
+rt_gte:entry                                                                                                                       1    1     26    17  CYCLE  CYCLE_TRAP
+rt_is:entry                                                                                                                        1   12     26    17  CYCLE  CYCLE_TRAP
+generate_stack_expr:entry                                                                                                         10   35     26    17  CYCLE  CYCLE_TRAP
+operand_type_nil:entry                                                                                                             4    0     27     1     L0  SINK_ABSTRACTION
+operand_type_int:entry                                                                                                             5    0     27     1     L0  SINK_ABSTRACTION
+operand_type_float:entry                                                                                                           4    0     27     1     L0  SINK_ABSTRACTION
+operand_type_string:entry                                                                                                          6    0     27     1     L0  SINK_ABSTRACTION
+assertion_handler.50:entry                                                                                                        18    0     51     1     L0  SINK_ABSTRACTION
+generate_stack_expr_with_conv:entry                                                                                                1    1     26    17  CYCLE  CYCLE_TRAP
+gss_get_symbol:entry                                                                                                               3    2     31     1     L3  PASS_THROUGH_HUB
+insert_symbol:entry                                                                                                               12    4     37     2  CYCLE  CYCLE_TRAP
+generate_call_expr:entry                                                                                                           2    5     26    17  CYCLE  CYCLE_TRAP
+generate_builtin_call_expr:entry                                                                                                   2   28     26    17  CYCLE  CYCLE_TRAP
+operand_from_ident:entry                                                                                                           2    1     27     1     L5  INTERNAL
+operand_global:entry                                                                                                               3    0     29     1     L0  SINK_ABSTRACTION
+mangle:entry                                                                                                                       4    1     30     1     L1  INTERNAL
+get_symbol:entry                                                                                                                  11    2     40     1     L2  PASS_THROUGH_HUB
+operand_label:entry                                                                                                                4    0     27     1     L0  SINK_ABSTRACTION
+generate_literal:entry                                                                                                             2   10     27     1     L5  PASS_THROUGH_HUB
+TEMP_VARIABLE:entry                                                                                                                2    0     31     1     L0  SINK_ABSTRACTION
+str_view_init:entry                                                                                                               10    0     45     1     L0  SINK_ABSTRACTION
+string_literal_converter:entry                                                                                                     1    2     29     1     L2  INTERNAL
+generate_call_expr_base:entry                                                                                                      2    7     26    17  CYCLE  CYCLE_TRAP
+str_view_cmp:entry                                                                                                                 2    0     27     1     L0  SINK_ABSTRACTION
+slice_elem_at:entry                                                                                                               11    1     31     1     L1  INTERNAL
+operand_local:entry                                                                                                                2    0     27     1     L0  SINK_ABSTRACTION
+RT_TYPE1:entry                                                                                                                     5    0     29     1     L0  SINK_ABSTRACTION
+operand_literal_nil:entry                                                                                                          7    0     33     1     L0  SINK_ABSTRACTION
+get_expr_type:entry                                                                                                                3    0     27     1     L0  SINK_ABSTRACTION
+generate_builtin_substring:entry                                                                                                   1   20     26    17  CYCLE  CYCLE_TRAP
+generate_builtin_strcmp:entry                                                                                                      1   11     26    17  CYCLE  CYCLE_TRAP
+tf_operand_from_ident:entry                                                                                                        2    3     30     1     L4  PASS_THROUGH_HUB
+float_literal_converter:entry+int_hex_literal_converter:entry                                                                      1    3     28     1     L4  INTERNAL
+operand_literal_float_from_str:entry                                                                                               1    1     28     1     L1  INTERNAL
+operand_literal_int_from_str:entry                                                                                                 2    1     28     1     L1  INTERNAL
+tf_operand_from_ident_assemble:entry                                                                                               3    1     31     1     L1  INTERNAL
+__const.generate_builtin_substring.s:entry+__const.generate_builtin_substring.start:entry+__const.generate_builtin_substring.en    1    0     27     1     L0  SINK_ABSTRACTION
+operand_label_from_c_str:entry                                                                                                     2    1     27     1     L1  INTERNAL
+__const.generate_builtin_strcmp.s1:entry+__const.generate_builtin_strcmp.s2:entry+__const.generate_builtin_strcmp.res:entry+__c    1    0     27     1     L0  SINK_ABSTRACTION
+mangle_callable:entry                                                                                                              3    2     28     1     L3  PASS_THROUGH_HUB
+mangle_method:entry+mangle_setter:entry+mangle_getter:entry                                                                        1    1     29     1     L2  INTERNAL
+decode_char_from_str_literal:entry                                                                                                 1    1     30     1     L1  INTERNAL
+hex_digit_to_value:entry                                                                                                           1    0     31     1     L0  SINK_ABSTRACTION
+RT_TYPE2:entry                                                                                                                     2    0     29     1     L0  SINK_ABSTRACTION
+operand_type_bool:entry                                                                                                            2    0     27     1     L0  SINK_ABSTRACTION
+da_grow_cap.91:entry                                                                                                               1    0     18     1     L0  SINK_ABSTRACTION
+generate:entry                                                                                                                     1    8      1     1     L9  INTERNAL
+generate_header:entry                                                                                                              1    0      2     1     L0  SINK_ABSTRACTION
+init_gss:entry                                                                                                                     1    3      2     1     L5  INTERNAL
+global_lang_pass:entry                                                                                                             1    5      2     1     L8  INTERNAL
+generate_base:entry                                                                                                                3   11      6     5  CYCLE  CYCLE_TRAP
+gss_release:entry                                                                                                                  1    2      2     1     L4  INTERNAL
+delete_mangle_buf:entry                                                                                                            1    1      2     1     L4  INTERNAL
+libc_allocator.95:entry                                                                                                            3    1      6     1     L1  INTERNAL
+init_globals:entry                                                                                                                 1    3      3     1     L7  INTERNAL
+search_for_global_vars:entry                                                                                                       1    6      3     1     L3  INTERNAL
+gss_insert_symbol:entry                                                                                                            3    2      9     1     L4  PASS_THROUGH_HUB
+generate_assign_stmt:entry                                                                                                         1   12      7     1     L4  INTERNAL
+generate_function:entry+generate_getter:entry+generate_setter:entry                                                                1    1      6     5  CYCLE  CYCLE_TRAP
+generate_block:entry                                                                                                               2    4      6     5  CYCLE  CYCLE_TRAP
+generate_loop:entry+generate_if_stmt:entry                                                                                         1    4      6     5  CYCLE  CYCLE_TRAP
+generate_return_stmt:entry                                                                                                         1    4      7     1     L2  INTERNAL
+gss_last:entry                                                                                                                     2    2     11     1     L3  PASS_THROUGH_HUB
+generate_callable_base:entry                                                                                                       1   15      6     5  CYCLE  CYCLE_TRAP
+gss_begin:entry                                                                                                                    3    5      9     1     L6  PASS_THROUGH_HUB
+gss_end:entry                                                                                                                      3    3      9     1     L4  PASS_THROUGH_HUB
+generate_conditional_jump:entry                                                                                                    1   10      7     1     L4  INTERNAL
+COND_TEMP:entry                                                                                                                    2    0     10     1     L0  SINK_ABSTRACTION
+scratch_allocator.94:entry                                                                                                         2    2     13     1     L5  PASS_THROUGH_HUB
+gss_reset:entry                                                                                                                    1    1      7     1     L4  INTERNAL
+generate_var_deflist:entry                                                                                                         1    2      7     1     L8  INTERNAL
+generate_var_deflist_recursive:entry                                                                                               1   19      8     1     L7  INTERNAL
+generate_var_deflist_temp_variable:entry                                                                                           1    8      9     1     L3  INTERNAL
+init_mangle_buf:entry                                                                                                              1    3      4     1     L6  INTERNAL
+scratch_allocator_new_buffer.96:entry                                                                                              1    1      5     1     L3  INTERNAL
+scratch_buffer_init.98:entry+sb_init.103:entry+node_array_init.108:entry+scope_stack_buffer_init.113:entry+da_init.230:entry       0    0      0     1     L0  INTERNAL
+scratch_buffer_append.99:entry+scratch_buffer_appendv.100:entry+sb_append.104:entry+sb_appendv.105:entry+node_array_append.109:    0    0      0     1     L0  INTERNAL
+scratch_buffer_elem_at.101:entry+sb_elem_at.106:entry+node_array_elem_at.111:entry+scope_stack_buffer_elem_at.116:entry+da_elem    0    0      0     1     L0  INTERNAL
+main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU    0   40      0     1    L10  ENTRY_ROOT
+scratch_buffer_init.232:entry+sb_init.237:entry+scope_stack_buffer_init.247:entry                                                  0    1      0     1     L1  ENTRY_ROOT
+da_init.264:entry                                                                                                                  3    0     18     1     L0  SINK_ABSTRACTION
+scratch_buffer_append.233:entry+scratch_buffer_appendv.234:entry+sb_append.238:entry+sb_appendv.239:entry+node_array_appendv.24    0    1      0     1     L2  ENTRY_ROOT
+da_append_base.262:entry                                                                                                           3    1     18     1     L1  INTERNAL
+scratch_buffer_elem_at.235:entry+sb_elem_at.240:entry+scope_stack_buffer_elem_at.250:entry+operator_stack_elem_at:entry+operand    0    1      0     1     L2  ENTRY_ROOT
+da_elem_at.259:entry                                                                                                               3    1     18     1     L1  INTERNAL
+scratch_buffer_delete.236:entry+sb_delete.241:entry+scope_stack_buffer_delete.251:entry                                            0    1      0     1     L2  ENTRY_ROOT
+da_delete.252:entry                                                                                                                3    1     18     1     L1  INTERNAL
+node_array_init.242:entry                                                                                                          4    1     15     1     L1  INTERNAL
+node_array_append.243:entry                                                                                                        4    1     15     1     L2  INTERNAL
+node_array_delete.246:entry                                                                                                        4    1     15     1     L2  INTERNAL
+operator_stack_init:entry+operand_stack_init:entry                                                                                 1    1     15     1     L1  INTERNAL
+operator_stack_append:entry+operand_stack_append:entry                                                                             1    1     15     1     L2  INTERNAL
+operator_stack_delete:entry+operand_stack_delete:entry                                                                             1    1     15     1     L2  INTERNAL
+assertion_handler.257:entry                                                                                                        5    0     27     1     L0  SINK_ABSTRACTION
+da_grow_cap.263:entry                                                                                                              1    0     19     1     L0  SINK_ABSTRACTION
+parser_error_handler:entry                                                                                                        14    0     16     1     L0  SINK_ABSTRACTION
+scanner_set_hint:entry                                                                                                             9    0     15     1     L0  SINK_ABSTRACTION
+next_token:entry                                                                                                                  12    1     17     1     L7  INTERNAL
+token_type_string:entry                                                                                                           14    1     16     1     L1  INTERNAL
+peek_token:entry                                                                                                                  13    2     16     1     L7  PASS_THROUGH_HUB
+parse_block:entry                                                                                                                  4   13      5     5  CYCLE  CYCLE_TRAP
+eat_token:entry                                                                                                                    8    1     16     1     L8  INTERNAL
+make_node_Ident.286:entry                                                                                                          4    1     16     1     L5  INTERNAL
+parse_command_list:entry                                                                                                           1    8      5     5  CYCLE  CYCLE_TRAP
+parse_expr:entry                                                                                                                   8    1     14     6  CYCLE  CYCLE_TRAP
+parse_command:entry                                                                                                                1   13      5     5  CYCLE  CYCLE_TRAP
+parse_binary_expr:entry                                                                                                            1   13     14     6  CYCLE  CYCLE_TRAP
+parse_base_expr:entry                                                                                                              1   10     14     6  CYCLE  CYCLE_TRAP
+operator_stack_last:entry+operand_stack_last:entry                                                                                 1    1     15     1     L3  INTERNAL
+ruleset:entry                                                                                                                      1    1     15     1     L1  INTERNAL
+operator_stack_pop:entry+operand_stack_pop:entry                                                                                   1    1     15     1     L2  INTERNAL
+parse_call_expr:entry                                                                                                              2    4     14     6  CYCLE  CYCLE_TRAP
+parse_builtin_call_expr:entry                                                                                                      2    9     14     6  CYCLE  CYCLE_TRAP
+parse_term:entry                                                                                                                   1    8     15     1     L9  INTERNAL
+stack_last:entry                                                                                                                   1    1     16     1     L2  INTERNAL
+rule_index:entry+ruleset.precedence_table:entry                                                                                    1    0     16     1     L0  SINK_ABSTRACTION
+stack_pop:entry                                                                                                                    1    1     16     1     L1  INTERNAL
+parse_call_expr_base:entry                                                                                                         2    7     14     6  CYCLE  CYCLE_TRAP
+tok_is_literal:entry+tok_is_ident:entry                                                                                            1    0     16     1     L0  SINK_ABSTRACTION
+parse_local_var_decl:entry                                                                                                         1    8      6     1     L9  INTERNAL
+parse_assignment:entry                                                                                                             1    5      6     1     L8  INTERNAL
+parse_if_stmt:entry                                                                                                                1    8      5     5  CYCLE  CYCLE_TRAP
+parse_while_stmt:entry                                                                                                             1    8      5     5  CYCLE  CYCLE_TRAP
+parse_return_stmt:entry                                                                                                            1    7      6     1     L8  INTERNAL
+scratch_buffer_init.340:entry                                                                                                      0    1      0     1     L1  ENTRY_ROOT
+da_init.362:entry                                                                                                                  2    0      2     1     L0  SINK_ABSTRACTION
+scratch_buffer_append.341:entry+scratch_buffer_appendv.342:entry+sb_appendv.347:entry                                              0    1      0     1     L2  ENTRY_ROOT
+da_append_base.360:entry                                                                                                           2    1     26     1     L1  INTERNAL
+scratch_buffer_elem_at.343:entry                                                                                                   0    1      0     1     L2  ENTRY_ROOT
+da_elem_at.357:entry                                                                                                               2    1     25     1     L1  INTERNAL
+scratch_buffer_delete.344:entry                                                                                                    0    1      0     1     L2  ENTRY_ROOT
+da_delete.350:entry                                                                                                                2    1      2     1     L1  INTERNAL
+sb_append.346:entry                                                                                                                2    1     24     1     L2  INTERNAL
+sb_elem_at.348:entry                                                                                                               1    1     23     1     L2  INTERNAL
+assertion_handler.355:entry                                                                                                        4    0     28     1     L0  SINK_ABSTRACTION
+da_grow_cap.361:entry                                                                                                              1    0     27     1     L0  SINK_ABSTRACTION
+reader_advance:entry                                                                                                               2    2     22     1     L3  PASS_THROUGH_HUB
+scanner_fetch_next_token:entry                                                                                                     2    9     19     1     L6  PASS_THROUGH_HUB
+scanner_buffer_reset:entry+scanner_peek_char:entry                                                                                 1    0     20     1     L0  SINK_ABSTRACTION
+prepare_token:entry+str_view_init.378:entry                                                                                        2    0     21     1     L0  SINK_ABSTRACTION
+scanner_next_char:entry                                                                                                            2    1     21     1     L4  INTERNAL
+scanner_buffer_append:entry                                                                                                        2    1     21     1     L3  INTERNAL
+scanner_convert_whitespace:entry                                                                                                   1    2     20     1     L5  INTERNAL
+check_for_escape:entry                                                                                                             1    1     20     1     L1  INTERNAL
+check_for_keyword:entry                                                                                                            1    3     20     1     L4  INTERNAL
+ESCAPECHARS:entry                                                                                                                  1    0     21     1     L0  SINK_ABSTRACTION
+KEYWORDS:entry+str_view_cmp.379:entry                                                                                              1    0     21     1     L0  SINK_ABSTRACTION
+reader_start_recording:entry+reader_stop_recording:entry                                                                           1    0     17     1     L0  SINK_ABSTRACTION
+scratch_buffer_init.400:entry+sb_init.405:entry+node_array_init.410:entry+scope_stack_buffer_init.415:entry                        0    1      0     1     L1  ENTRY_ROOT
+da_init.432:entry                                                                                                                  2    0      6     1     L0  SINK_ABSTRACTION
+scratch_buffer_append.401:entry+scratch_buffer_appendv.402:entry+sb_append.406:entry+sb_appendv.407:entry+node_array_append.411    0    1      0     1     L2  ENTRY_ROOT
+da_append_base.430:entry                                                                                                           2    1      6     1     L1  INTERNAL
+scratch_buffer_elem_at.403:entry+sb_elem_at.408:entry+node_array_elem_at.413:entry+scope_stack_buffer_elem_at.418:entry            0    1      0     1     L2  ENTRY_ROOT
+da_elem_at.427:entry                                                                                                               2    1      9     1     L1  INTERNAL
+scratch_buffer_delete.404:entry+sb_delete.409:entry+node_array_delete.414:entry+scope_stack_buffer_delete.419:entry+func_group_    0    1      0     1     L1  ENTRY_ROOT
+func_group_init:entry                                                                                                              1    1      4     1     L1  INTERNAL
+func_group_append:entry                                                                                                            1    1      4     1     L2  INTERNAL
+func_group_elem_at:entry                                                                                                           2    1      7     1     L2  INTERNAL
+assertion_handler.425:entry                                                                                                        7    0     12     1     L0  SINK_ABSTRACTION
+da_grow_cap.431:entry                                                                                                              1    0      7     1     L0  SINK_ABSTRACTION
+g_allocator:entry                                                                                                                  2    0      4     1     L0  SINK_ABSTRACTION
+g_getter_table:entry                                                                                                               3    0      6     1     L0  SINK_ABSTRACTION
+g_setter_table:entry                                                                                                               3    0      4     1     L0  SINK_ABSTRACTION
+g_function_table:entry                                                                                                             4    0      6     1     L0  SINK_ABSTRACTION
+g_builtin_function_table:entry                                                                                                     2    0      5     1     L0  SINK_ABSTRACTION
+g_scope_stack:entry                                                                                                                3    0      5     1     L0  SINK_ABSTRACTION
+sem_check:entry                                                                                                                    2   13      2     2  CYCLE  CYCLE_TRAP
+slice_elem_at.450:entry                                                                                                            4    1      5     1     L1  INTERNAL
+check_expr:entry                                                                                                                   3   10      4     2  CYCLE  CYCLE_TRAP
+insert_global_symbol:entry                                                                                                         1   11      3     1     L4  INTERNAL
+check_inside_block:entry                                                                                                           1    2      2     2  CYCLE  CYCLE_TRAP
+get_func_symbol:entry                                                                                                              2    1      6     1     L3  INTERNAL
+str_view_cmp.454:entry+check_builtin:entry                                                                                         1    0      5     1     L0  SINK_ABSTRACTION
+check_binary_expr:entry                                                                                                            1    2      4     2  CYCLE  CYCLE_TRAP
+scratch_buffer_init.459:entry+da_init.476:entry                                                                                    0    0      0     1     L0  INTERNAL
+scratch_buffer_append.460:entry+scratch_buffer_appendv.461:entry+da_append_base.474:entry+da_grow_cap.475:entry                    0    0      0     1     L0  INTERNAL
+scratch_buffer_elem_at.462:entry+da_elem_at.471:entry+scratch_buffer_delete.463:entry+da_delete.464:entry                          0    1      0     1     L1  ENTRY_ROOT
+hash_djb:entry                                                                                                                     1    0     45     1     L0  SINK_ABSTRACTION
+hash_ptr:entry                                                                                                                     0    0      0     1     L0  INTERNAL
+hash_str:entry                                                                                                                     0    0      0     1     L0  INTERNAL
+assertion_handler.469:entry                                                                                                        2    0     39     1     L0  SINK_ABSTRACTION
+grow:entry                                                                                                                         1    2     37     2  CYCLE  CYCLE_TRAP
+hash_function:entry                                                                                                                2    1     44     1     L1  INTERNAL
+str_view_cmp.485:entry                                                                                                             2    0     44     1     L0  SINK_ABSTRACTION
+SYMBOL_TABLE_GROUP_EMPTIES:entry                                                                                                   1    0     38     1     L0  SINK_ABSTRACTION
+------------------------------------------------------------------------------------------------------------------------------
+SUMMARY [/Users/dan/Documents/src/graph-code-complexity-an]: Nodes=300 | Edges=729 | MaxSCC=17 | CyclicNodes=39 | PropCost=5.53% | ExtRefs=dropped
+EDGE scratch_buffer_init:entry da_init:entry
+EDGE scratch_buffer_append:entry da_append_base:entry
+EDGE da_append_base:entry da_grow_cap:entry
+EDGE scratch_buffer_appendv:entry da_append_base:entry
+EDGE scratch_buffer_elem_at:entry da_elem_at:entry
+EDGE da_elem_at:entry assertion_handler:entry
+EDGE scratch_buffer_delete:entry da_delete:entry
+EDGE da_delete:entry assertion_handler:entry
+EDGE initialize_allocator:entry __func__.initialize_allocator:entry
+EDGE initialize_allocator:entry alloc_buffer:entry
+EDGE delete_allocator:entry __func__.delete_allocator:entry
+EDGE delete_allocator:entry delete_buffer:entry
+EDGE delete_buffer:entry __func__.delete_buffer:entry
+EDGE alloc_non_zeroed:entry __func__.alloc_non_zeroed:entry
+EDGE alloc_non_zeroed:entry align:entry
+EDGE alloc_non_zeroed:entry initialize_buffer:entry
+EDGE initialize_buffer:entry alloc_buffer:entry
+EDGE initialize_buffer:entry __func__.initialize_buffer:entry
+EDGE alloc:entry alloc_non_zeroed:entry
+EDGE alloc_temp:entry alloc_non_zeroed_temp:entry
+EDGE scratch_alloc_proc:entry scratch_buffer_elem_at:entry
+EDGE scratch_alloc_proc:entry assertion_handler:entry
+EDGE scratch_alloc_proc:entry align:entry
+EDGE scratch_alloc_proc:entry scratch_allocator_new_buffer:entry
+EDGE scratch_allocator_new_buffer:entry scratch_buffer_append:entry
+EDGE scratch_allocator_init:entry scratch_buffer_init:entry
+EDGE scratch_allocator_init:entry scratch_buffer_delete:entry
+EDGE scratch_allocator_init:entry scratch_allocator_new_buffer:entry
+EDGE scratch_allocator_release:entry scratch_buffer_elem_at:entry
+EDGE scratch_allocator_release:entry scratch_buffer_delete:entry
+EDGE scratch_allocator_reset:entry scratch_buffer_elem_at:entry
+EDGE scratch_buffer_init.2:entry+sb_init:entry+node_array_init:entry da_init.19:entry
+EDGE scratch_buffer_append.3:entry+scratch_buffer_appendv.4:entry+sb_append:entry+sb_appendv:entry+node_array_append:entry+node_arra da_append_base.17:entry
+EDGE da_append_base.17:entry da_grow_cap.18:entry
+EDGE scratch_buffer_elem_at.5:entry+sb_elem_at:entry+node_array_elem_at:entry da_elem_at.14:entry
+EDGE da_elem_at.14:entry assertion_handler.12:entry
+EDGE scratch_buffer_delete.6:entry+sb_delete:entry+node_array_delete:entry da_delete.7:entry
+EDGE da_delete.7:entry assertion_handler.12:entry
+EDGE scope_stack_buffer_init:entry da_init.19:entry
+EDGE scope_stack_buffer_append:entry da_append_base.17:entry
+EDGE scope_stack_buffer_elem_at:entry da_elem_at.14:entry
+EDGE scope_stack_buffer_delete:entry da_delete.7:entry
+EDGE make_node:entry alloc:entry
+EDGE make_node:entry AST_SIZES:entry
+EDGE construct_node_Getter:entry make_node_Getter:entry
+EDGE construct_node_Getter:entry make_node_Ident:entry
+EDGE make_node_Getter:entry make_node:entry
+EDGE make_node_Ident:entry make_node:entry
+EDGE construct_node_Setter:entry make_node_Ident:entry
+EDGE construct_node_Setter:entry make_node_Setter:entry
+EDGE make_node_Setter:entry make_node:entry
+EDGE construct_node_Method:entry make_node_Ident:entry
+EDGE construct_node_Method:entry make_node_Method:entry
+EDGE construct_node_Method:entry node_slice_copy_buffer:entry
+EDGE make_node_Method:entry make_node:entry
+EDGE node_slice_copy_buffer:entry alloc_non_zeroed:entry
+EDGE construct_node_Block_Stmt:entry node_slice_copy_buffer:entry
+EDGE construct_node_Block_Stmt:entry make_node_Block_Stmt:entry
+EDGE make_node_Block_Stmt:entry make_node:entry
+EDGE construct_node_Program:entry make_node_Program_Skelet:entry
+EDGE make_node_Program_Skelet:entry make_node:entry
+EDGE construct_node_Var_Decl:entry make_node_Ident:entry
+EDGE construct_node_Var_Decl:entry make_node_Var_Decl:entry
+EDGE make_node_Var_Decl:entry make_node:entry
+EDGE construct_node_If_Stmt:entry make_node_If_Stmt:entry
+EDGE make_node_If_Stmt:entry make_node:entry
+EDGE construct_node_While_Stmt:entry make_node_While_Stmt:entry
+EDGE make_node_While_Stmt:entry make_node:entry
+EDGE construct_node_Return_Stmt:entry make_node_Return_Stmt:entry
+EDGE make_node_Return_Stmt:entry make_node:entry
+EDGE construct_node_Assign_Stmt:entry make_node_Ident:entry
+EDGE construct_node_Assign_Stmt:entry make_node_Assign_Stmt:entry
+EDGE make_node_Assign_Stmt:entry make_node:entry
+EDGE construct_node_Call_Expr:entry make_node_Ident:entry
+EDGE construct_node_Call_Expr:entry node_slice_copy_buffer:entry
+EDGE construct_node_Call_Expr:entry make_node_Call_Expr:entry
+EDGE make_node_Call_Expr:entry make_node:entry
+EDGE construct_node_Builtin_Call_Expr:entry make_node_Ident:entry
+EDGE construct_node_Builtin_Call_Expr:entry node_slice_copy_buffer:entry
+EDGE construct_node_Builtin_Call_Expr:entry make_node_Builtin_Call_Expr:entry
+EDGE make_node_Builtin_Call_Expr:entry make_node:entry
+EDGE construct_node_Binary_Expr:entry make_node_Binary_Expr:entry
+EDGE make_node_Binary_Expr:entry make_node:entry
+EDGE construct_node_Literal:entry make_node_Literal:entry
+EDGE make_node_Literal:entry make_node:entry
+EDGE init_scope_stack:entry scratch_allocator_init:entry
+EDGE init_scope_stack:entry scope_stack_buffer_init:entry
+EDGE init_scope_stack:entry scope_stack_buffer_append:entry
+EDGE init_scope_stack:entry assertion_handler.12:entry
+EDGE init_scope_stack:entry libc_allocator:entry
+EDGE init_scope_stack:entry init_symbol_table:entry
+EDGE libc_allocator:entry libc_alloc_proc:entry+libc_free_proc:entry
+EDGE delete_scope_stack:entry scratch_allocator_release:entry
+EDGE delete_scope_stack:entry scope_stack_buffer_elem_at:entry
+EDGE delete_scope_stack:entry scope_stack_buffer_delete:entry
+EDGE delete_scope_stack:entry delete_symbol_table:entry
+EDGE begin_scope:entry scratch_allocator_get_state:entry
+EDGE begin_scope:entry scope_stack_buffer_append:entry
+EDGE begin_scope:entry init_symbol_table:entry
+EDGE begin_scope:entry scratch_allocator:entry
+EDGE scratch_allocator:entry scratch_alloc_proc:entry
+EDGE scratch_allocator:entry scratch_free_proc:entry
+EDGE end_scope:entry scratch_allocator_reset:entry
+EDGE end_scope:entry assertion_handler.12:entry
+EDGE scratch_buffer_append.25:entry da_append_base.90:entry
+EDGE da_append_base.90:entry da_grow_cap.91:entry
+EDGE scratch_buffer_appendv.26:entry+sb_append.30:entry+sb_appendv.31:entry+node_array_append.35:entry+node_array_appendv.36:entry+s da_append_base.90:entry
+EDGE scratch_buffer_elem_at.27:entry+sb_elem_at.32:entry+node_array_elem_at.37:entry+scope_stack_buffer_elem_at.42:entry da_elem_at.89:entry
+EDGE da_elem_at.89:entry assertion_handler.50:entry
+EDGE scratch_buffer_delete.28:entry+sb_delete.33:entry+node_array_delete.38:entry+scope_stack_buffer_delete.43:entry da_delete.88:entry
+EDGE da_delete.88:entry assertion_handler.50:entry
+EDGE gss_append:entry da_append_base.90:entry
+EDGE gss_elem_at:entry da_elem_at.89:entry
+EDGE gss_delete:entry da_delete.88:entry
+EDGE rt_add:entry+rt_sub:entry+rt_div:entry operand_label_indexed:entry
+EDGE rt_add:entry+rt_sub:entry+rt_div:entry rt_binary_op_prologue:entry
+EDGE rt_add:entry+rt_sub:entry+rt_div:entry print_operand:entry
+EDGE rt_add:entry+rt_sub:entry+rt_div:entry RT_TEMP2:entry
+EDGE rt_add:entry+rt_sub:entry+rt_div:entry RT_TEMP1:entry
+EDGE rt_add:entry+rt_sub:entry+rt_div:entry operand_literal_int:entry
+EDGE operand_label_indexed:entry assertion_handler.50:entry
+EDGE operand_label_indexed:entry str_view_init:entry
+EDGE rt_binary_op_prologue:entry operand_label_indexed:entry
+EDGE rt_binary_op_prologue:entry print_operand:entry
+EDGE rt_binary_op_prologue:entry RT_TEMP2:entry
+EDGE rt_binary_op_prologue:entry RT_TEMP1:entry
+EDGE rt_binary_op_prologue:entry generate_stack_expr:entry
+EDGE rt_binary_op_prologue:entry operand_type_nil:entry
+EDGE rt_binary_op_prologue:entry operand_type_int:entry
+EDGE rt_binary_op_prologue:entry operand_type_float:entry
+EDGE rt_binary_op_prologue:entry operand_type_string:entry
+EDGE rt_binary_op_prologue:entry RT_TYPE1:entry
+EDGE rt_binary_op_prologue:entry RT_TYPE2:entry
+EDGE rt_binary_op_prologue:entry operand_type_bool:entry
+EDGE operand_literal_int:entry str_view_init:entry
+EDGE rt_mul:entry operand_label_indexed:entry
+EDGE rt_mul:entry rt_binary_op_prologue:entry
+EDGE rt_mul:entry print_operand:entry
+EDGE rt_mul:entry RT_TEMP2:entry
+EDGE rt_mul:entry RT_TEMP1:entry
+EDGE rt_mul:entry operand_literal_int:entry
+EDGE rt_mul:entry operand_temp:entry
+EDGE rt_mul:entry operand_literal_string:entry
+EDGE rt_mul:entry operand_literal_bool:entry
+EDGE operand_temp:entry TEMP_VARIABLE:entry
+EDGE operand_literal_string:entry str_view_init:entry
+EDGE operand_literal_string:entry string_literal_converter:entry
+EDGE rt_eq:entry operand_label_indexed:entry
+EDGE rt_eq:entry rt_binary_op_prologue:entry
+EDGE rt_eq:entry print_operand:entry
+EDGE rt_eq:entry RT_TEMP2:entry
+EDGE rt_eq:entry RT_TEMP1:entry
+EDGE rt_eq:entry operand_literal_bool:entry
+EDGE rt_neq:entry rt_eq:entry
+EDGE rt_lt:entry operand_label_indexed:entry
+EDGE rt_lt:entry rt_binary_op_prologue:entry
+EDGE rt_lt:entry print_operand:entry
+EDGE rt_lt:entry RT_TEMP2:entry
+EDGE rt_lt:entry RT_TEMP1:entry
+EDGE rt_lt:entry operand_literal_int:entry
+EDGE rt_gt:entry operand_label_indexed:entry
+EDGE rt_gt:entry rt_binary_op_prologue:entry
+EDGE rt_gt:entry print_operand:entry
+EDGE rt_gt:entry RT_TEMP2:entry
+EDGE rt_gt:entry RT_TEMP1:entry
+EDGE rt_gt:entry operand_literal_int:entry
+EDGE rt_lte:entry rt_gt:entry
+EDGE rt_gte:entry rt_lt:entry
+EDGE rt_is:entry scratch_allocator_get_state:entry
+EDGE rt_is:entry scratch_allocator_reset:entry
+EDGE rt_is:entry operand_label_indexed:entry
+EDGE rt_is:entry print_operand:entry
+EDGE rt_is:entry operand_temp:entry
+EDGE rt_is:entry operand_literal_bool:entry
+EDGE rt_is:entry generate_stack_expr:entry
+EDGE rt_is:entry operand_type_nil:entry
+EDGE rt_is:entry operand_type_int:entry
+EDGE rt_is:entry operand_type_float:entry
+EDGE rt_is:entry operand_type_string:entry
+EDGE rt_is:entry assertion_handler.50:entry
+EDGE generate_stack_expr:entry scratch_allocator_get_state:entry
+EDGE generate_stack_expr:entry scratch_allocator_reset:entry
+EDGE generate_stack_expr:entry gss_elem_at:entry
+EDGE generate_stack_expr:entry rt_add:entry+rt_sub:entry+rt_div:entry
+EDGE generate_stack_expr:entry operand_label_indexed:entry
+EDGE generate_stack_expr:entry print_operand:entry
+EDGE generate_stack_expr:entry RT_TEMP2:entry
+EDGE generate_stack_expr:entry RT_TEMP1:entry
+EDGE generate_stack_expr:entry operand_literal_int:entry
+EDGE generate_stack_expr:entry rt_mul:entry
+EDGE generate_stack_expr:entry operand_temp:entry
+EDGE generate_stack_expr:entry operand_literal_string:entry
+EDGE generate_stack_expr:entry operand_literal_bool:entry
+EDGE generate_stack_expr:entry rt_eq:entry
+EDGE generate_stack_expr:entry rt_neq:entry
+EDGE generate_stack_expr:entry rt_lt:entry
+EDGE generate_stack_expr:entry rt_gt:entry
+EDGE generate_stack_expr:entry rt_lte:entry
+EDGE generate_stack_expr:entry rt_gte:entry
+EDGE generate_stack_expr:entry rt_is:entry
+EDGE generate_stack_expr:entry operand_type_nil:entry
+EDGE generate_stack_expr:entry operand_type_int:entry
+EDGE generate_stack_expr:entry operand_type_string:entry
+EDGE generate_stack_expr:entry assertion_handler.50:entry
+EDGE generate_stack_expr:entry generate_stack_expr_with_conv:entry
+EDGE generate_stack_expr:entry gss_get_symbol:entry
+EDGE generate_stack_expr:entry insert_symbol:entry
+EDGE generate_stack_expr:entry generate_call_expr:entry
+EDGE generate_stack_expr:entry generate_builtin_call_expr:entry
+EDGE generate_stack_expr:entry operand_from_ident:entry
+EDGE generate_stack_expr:entry operand_global:entry
+EDGE generate_stack_expr:entry mangle:entry
+EDGE generate_stack_expr:entry get_symbol:entry
+EDGE generate_stack_expr:entry operand_label:entry
+EDGE generate_stack_expr:entry generate_literal:entry
+EDGE generate_stack_expr_with_conv:entry generate_stack_expr:entry
+EDGE gss_get_symbol:entry gss_elem_at:entry
+EDGE gss_get_symbol:entry get_symbol:entry
+EDGE insert_symbol:entry assertion_handler.469:entry
+EDGE insert_symbol:entry grow:entry
+EDGE insert_symbol:entry hash_function:entry
+EDGE insert_symbol:entry str_view_cmp.485:entry
+EDGE generate_call_expr:entry scratch_allocator_get_state:entry
+EDGE generate_call_expr:entry scratch_allocator_reset:entry
+EDGE generate_call_expr:entry mangle:entry
+EDGE generate_call_expr:entry get_symbol:entry
+EDGE generate_call_expr:entry generate_call_expr_base:entry
+EDGE generate_builtin_call_expr:entry scratch_allocator_get_state:entry
+EDGE generate_builtin_call_expr:entry scratch_allocator_reset:entry
+EDGE generate_builtin_call_expr:entry gss_elem_at:entry
+EDGE generate_builtin_call_expr:entry operand_label_indexed:entry
+EDGE generate_builtin_call_expr:entry print_operand:entry
+EDGE generate_builtin_call_expr:entry RT_TEMP2:entry
+EDGE generate_builtin_call_expr:entry RT_TEMP1:entry
+EDGE generate_builtin_call_expr:entry operand_literal_int:entry
+EDGE generate_builtin_call_expr:entry operand_temp:entry
+EDGE generate_builtin_call_expr:entry operand_literal_string:entry
+EDGE generate_builtin_call_expr:entry operand_literal_bool:entry
+EDGE generate_builtin_call_expr:entry generate_stack_expr:entry
+EDGE generate_builtin_call_expr:entry operand_type_nil:entry
+EDGE generate_builtin_call_expr:entry operand_type_int:entry
+EDGE generate_builtin_call_expr:entry operand_type_float:entry
+EDGE generate_builtin_call_expr:entry operand_type_string:entry
+EDGE generate_builtin_call_expr:entry assertion_handler.50:entry
+EDGE generate_builtin_call_expr:entry insert_symbol:entry
+EDGE generate_builtin_call_expr:entry get_symbol:entry
+EDGE generate_builtin_call_expr:entry operand_label:entry
+EDGE generate_builtin_call_expr:entry str_view_cmp:entry
+EDGE generate_builtin_call_expr:entry slice_elem_at:entry
+EDGE generate_builtin_call_expr:entry operand_local:entry
+EDGE generate_builtin_call_expr:entry RT_TYPE1:entry
+EDGE generate_builtin_call_expr:entry operand_literal_nil:entry
+EDGE generate_builtin_call_expr:entry get_expr_type:entry
+EDGE generate_builtin_call_expr:entry generate_builtin_substring:entry
+EDGE generate_builtin_call_expr:entry generate_builtin_strcmp:entry
+EDGE operand_from_ident:entry tf_operand_from_ident:entry
+EDGE mangle:entry str_view_init:entry
+EDGE get_symbol:entry hash_function:entry
+EDGE get_symbol:entry str_view_cmp.485:entry
+EDGE generate_literal:entry scratch_allocator_get_state:entry
+EDGE generate_literal:entry scratch_allocator_reset:entry
+EDGE generate_literal:entry print_operand:entry
+EDGE generate_literal:entry operand_literal_string:entry
+EDGE generate_literal:entry operand_literal_bool:entry
+EDGE generate_literal:entry assertion_handler.50:entry
+EDGE generate_literal:entry operand_literal_nil:entry
+EDGE generate_literal:entry float_literal_converter:entry+int_hex_literal_converter:entry
+EDGE generate_literal:entry operand_literal_float_from_str:entry
+EDGE generate_literal:entry operand_literal_int_from_str:entry
+EDGE string_literal_converter:entry str_view_init:entry
+EDGE string_literal_converter:entry decode_char_from_str_literal:entry
+EDGE generate_call_expr_base:entry scratch_allocator_get_state:entry
+EDGE generate_call_expr_base:entry scratch_allocator_reset:entry
+EDGE generate_call_expr_base:entry print_operand:entry
+EDGE generate_call_expr_base:entry generate_stack_expr:entry
+EDGE generate_call_expr_base:entry operand_label:entry
+EDGE generate_call_expr_base:entry slice_elem_at:entry
+EDGE generate_call_expr_base:entry mangle_callable:entry
+EDGE slice_elem_at:entry assertion_handler.50:entry
+EDGE generate_builtin_substring:entry scratch_allocator_get_state:entry
+EDGE generate_builtin_substring:entry scratch_allocator_reset:entry
+EDGE generate_builtin_substring:entry operand_label_indexed:entry
+EDGE generate_builtin_substring:entry print_operand:entry
+EDGE generate_builtin_substring:entry RT_TEMP1:entry
+EDGE generate_builtin_substring:entry operand_literal_int:entry
+EDGE generate_builtin_substring:entry operand_temp:entry
+EDGE generate_builtin_substring:entry operand_literal_string:entry
+EDGE generate_builtin_substring:entry operand_literal_bool:entry
+EDGE generate_builtin_substring:entry generate_stack_expr:entry
+EDGE generate_builtin_substring:entry operand_type_int:entry
+EDGE generate_builtin_substring:entry operand_type_float:entry
+EDGE generate_builtin_substring:entry operand_type_string:entry
+EDGE generate_builtin_substring:entry slice_elem_at:entry
+EDGE generate_builtin_substring:entry operand_local:entry
+EDGE generate_builtin_substring:entry RT_TYPE1:entry
+EDGE generate_builtin_substring:entry operand_literal_nil:entry
+EDGE generate_builtin_substring:entry get_expr_type:entry
+EDGE generate_builtin_substring:entry __const.generate_builtin_substring.s:entry+__const.generate_builtin_substring.start:entry+__const.generate_builtin_substring.en
+EDGE generate_builtin_substring:entry operand_label_from_c_str:entry
+EDGE generate_builtin_strcmp:entry print_operand:entry
+EDGE generate_builtin_strcmp:entry operand_literal_int:entry
+EDGE generate_builtin_strcmp:entry operand_temp:entry
+EDGE generate_builtin_strcmp:entry operand_literal_bool:entry
+EDGE generate_builtin_strcmp:entry generate_stack_expr:entry
+EDGE generate_builtin_strcmp:entry operand_type_string:entry
+EDGE generate_builtin_strcmp:entry slice_elem_at:entry
+EDGE generate_builtin_strcmp:entry RT_TYPE1:entry
+EDGE generate_builtin_strcmp:entry get_expr_type:entry
+EDGE generate_builtin_strcmp:entry operand_label_from_c_str:entry
+EDGE generate_builtin_strcmp:entry __const.generate_builtin_strcmp.s1:entry+__const.generate_builtin_strcmp.s2:entry+__const.generate_builtin_strcmp.res:entry+__c
+EDGE tf_operand_from_ident:entry assertion_handler.50:entry
+EDGE tf_operand_from_ident:entry gss_get_symbol:entry
+EDGE tf_operand_from_ident:entry tf_operand_from_ident_assemble:entry
+EDGE float_literal_converter:entry+int_hex_literal_converter:entry scratch_allocator_get_state:entry
+EDGE float_literal_converter:entry+int_hex_literal_converter:entry scratch_allocator_reset:entry
+EDGE float_literal_converter:entry+int_hex_literal_converter:entry str_view_init:entry
+EDGE operand_literal_float_from_str:entry str_view_init:entry
+EDGE operand_literal_int_from_str:entry str_view_init:entry
+EDGE tf_operand_from_ident_assemble:entry str_view_init:entry
+EDGE operand_label_from_c_str:entry str_view_init:entry
+EDGE mangle_callable:entry assertion_handler.50:entry
+EDGE mangle_callable:entry mangle_method:entry+mangle_setter:entry+mangle_getter:entry
+EDGE mangle_method:entry+mangle_setter:entry+mangle_getter:entry mangle:entry
+EDGE decode_char_from_str_literal:entry hex_digit_to_value:entry
+EDGE generate:entry delete_symbol_table:entry
+EDGE generate:entry slice_elem_at:entry
+EDGE generate:entry generate_header:entry
+EDGE generate:entry init_gss:entry
+EDGE generate:entry global_lang_pass:entry
+EDGE generate:entry generate_base:entry
+EDGE generate:entry gss_release:entry
+EDGE generate:entry delete_mangle_buf:entry
+EDGE init_gss:entry scratch_allocator_init:entry
+EDGE init_gss:entry assertion_handler.50:entry
+EDGE init_gss:entry libc_allocator.95:entry
+EDGE global_lang_pass:entry insert_symbol:entry
+EDGE global_lang_pass:entry slice_elem_at:entry
+EDGE global_lang_pass:entry mangle_callable:entry
+EDGE global_lang_pass:entry init_globals:entry
+EDGE global_lang_pass:entry search_for_global_vars:entry
+EDGE generate_base:entry assertion_handler.50:entry
+EDGE generate_base:entry generate_call_expr:entry
+EDGE generate_base:entry generate_builtin_call_expr:entry
+EDGE generate_base:entry operand_from_ident:entry
+EDGE generate_base:entry generate_literal:entry
+EDGE generate_base:entry gss_insert_symbol:entry
+EDGE generate_base:entry generate_assign_stmt:entry
+EDGE generate_base:entry generate_function:entry+generate_getter:entry+generate_setter:entry
+EDGE generate_base:entry generate_block:entry
+EDGE generate_base:entry generate_loop:entry+generate_if_stmt:entry
+EDGE generate_base:entry generate_return_stmt:entry
+EDGE gss_release:entry scratch_allocator_release:entry
+EDGE gss_release:entry gss_delete:entry
+EDGE delete_mangle_buf:entry scratch_allocator_release:entry
+EDGE libc_allocator.95:entry libc_alloc_proc:entry+libc_free_proc:entry
+EDGE init_globals:entry init_symbol_table:entry
+EDGE init_globals:entry libc_allocator.95:entry
+EDGE init_globals:entry init_mangle_buf:entry
+EDGE search_for_global_vars:entry print_operand:entry
+EDGE search_for_global_vars:entry insert_symbol:entry
+EDGE search_for_global_vars:entry operand_global:entry
+EDGE search_for_global_vars:entry get_symbol:entry
+EDGE search_for_global_vars:entry slice_elem_at:entry
+EDGE search_for_global_vars:entry operand_literal_nil:entry
+EDGE gss_insert_symbol:entry insert_symbol:entry
+EDGE gss_insert_symbol:entry gss_last:entry
+EDGE generate_assign_stmt:entry scratch_allocator_get_state:entry
+EDGE generate_assign_stmt:entry scratch_allocator_reset:entry
+EDGE generate_assign_stmt:entry print_operand:entry
+EDGE generate_assign_stmt:entry generate_stack_expr:entry
+EDGE generate_assign_stmt:entry assertion_handler.50:entry
+EDGE generate_assign_stmt:entry gss_get_symbol:entry
+EDGE generate_assign_stmt:entry insert_symbol:entry
+EDGE generate_assign_stmt:entry operand_global:entry
+EDGE generate_assign_stmt:entry mangle:entry
+EDGE generate_assign_stmt:entry get_symbol:entry
+EDGE generate_assign_stmt:entry generate_call_expr_base:entry
+EDGE generate_assign_stmt:entry tf_operand_from_ident_assemble:entry
+EDGE generate_function:entry+generate_getter:entry+generate_setter:entry generate_callable_base:entry
+EDGE generate_block:entry slice_elem_at:entry
+EDGE generate_block:entry generate_base:entry
+EDGE generate_block:entry gss_begin:entry
+EDGE generate_block:entry gss_end:entry
+EDGE generate_loop:entry+generate_if_stmt:entry operand_label_indexed:entry
+EDGE generate_loop:entry+generate_if_stmt:entry print_operand:entry
+EDGE generate_loop:entry+generate_if_stmt:entry generate_block:entry
+EDGE generate_loop:entry+generate_if_stmt:entry generate_conditional_jump:entry
+EDGE generate_return_stmt:entry print_operand:entry
+EDGE generate_return_stmt:entry operand_literal_int:entry
+EDGE generate_return_stmt:entry generate_stack_expr:entry
+EDGE generate_return_stmt:entry operand_literal_int_from_str:entry
+EDGE gss_last:entry gss_elem_at:entry
+EDGE gss_last:entry assertion_handler.50:entry
+EDGE generate_callable_base:entry scratch_allocator_get_state:entry
+EDGE generate_callable_base:entry scratch_allocator_reset:entry
+EDGE generate_callable_base:entry print_operand:entry
+EDGE generate_callable_base:entry operand_literal_int:entry
+EDGE generate_callable_base:entry operand_label:entry
+EDGE generate_callable_base:entry str_view_cmp:entry
+EDGE generate_callable_base:entry slice_elem_at:entry
+EDGE generate_callable_base:entry tf_operand_from_ident_assemble:entry
+EDGE generate_callable_base:entry mangle_callable:entry
+EDGE generate_callable_base:entry generate_base:entry
+EDGE generate_callable_base:entry gss_insert_symbol:entry
+EDGE generate_callable_base:entry gss_begin:entry
+EDGE generate_callable_base:entry gss_end:entry
+EDGE generate_callable_base:entry gss_reset:entry
+EDGE generate_callable_base:entry generate_var_deflist:entry
+EDGE gss_begin:entry scratch_allocator_get_state:entry
+EDGE gss_begin:entry init_symbol_table:entry
+EDGE gss_begin:entry gss_append:entry
+EDGE gss_begin:entry assertion_handler.50:entry
+EDGE gss_begin:entry scratch_allocator.94:entry
+EDGE gss_end:entry scratch_allocator_reset:entry
+EDGE gss_end:entry assertion_handler.50:entry
+EDGE gss_end:entry gss_last:entry
+EDGE generate_conditional_jump:entry scratch_allocator_get_state:entry
+EDGE generate_conditional_jump:entry scratch_allocator_reset:entry
+EDGE generate_conditional_jump:entry operand_label_indexed:entry
+EDGE generate_conditional_jump:entry print_operand:entry
+EDGE generate_conditional_jump:entry operand_temp:entry
+EDGE generate_conditional_jump:entry operand_literal_bool:entry
+EDGE generate_conditional_jump:entry generate_stack_expr:entry
+EDGE generate_conditional_jump:entry operand_literal_nil:entry
+EDGE generate_conditional_jump:entry operand_type_bool:entry
+EDGE generate_conditional_jump:entry COND_TEMP:entry
+EDGE scratch_allocator.94:entry scratch_alloc_proc:entry
+EDGE scratch_allocator.94:entry scratch_free_proc:entry
+EDGE gss_reset:entry scratch_allocator_reset:entry
+EDGE generate_var_deflist:entry slice_elem_at:entry
+EDGE generate_var_deflist:entry generate_var_deflist_recursive:entry
+EDGE generate_var_deflist_recursive:entry scratch_allocator_get_state:entry
+EDGE generate_var_deflist_recursive:entry scratch_allocator_reset:entry
+EDGE generate_var_deflist_recursive:entry gss_elem_at:entry
+EDGE generate_var_deflist_recursive:entry print_operand:entry
+EDGE generate_var_deflist_recursive:entry RT_TEMP2:entry
+EDGE generate_var_deflist_recursive:entry RT_TEMP1:entry
+EDGE generate_var_deflist_recursive:entry assertion_handler.50:entry
+EDGE generate_var_deflist_recursive:entry insert_symbol:entry
+EDGE generate_var_deflist_recursive:entry get_symbol:entry
+EDGE generate_var_deflist_recursive:entry slice_elem_at:entry
+EDGE generate_var_deflist_recursive:entry RT_TYPE1:entry
+EDGE generate_var_deflist_recursive:entry operand_literal_nil:entry
+EDGE generate_var_deflist_recursive:entry tf_operand_from_ident:entry
+EDGE generate_var_deflist_recursive:entry RT_TYPE2:entry
+EDGE generate_var_deflist_recursive:entry gss_insert_symbol:entry
+EDGE generate_var_deflist_recursive:entry gss_begin:entry
+EDGE generate_var_deflist_recursive:entry gss_end:entry
+EDGE generate_var_deflist_recursive:entry COND_TEMP:entry
+EDGE generate_var_deflist_recursive:entry generate_var_deflist_temp_variable:entry
+EDGE generate_var_deflist_temp_variable:entry gss_elem_at:entry
+EDGE generate_var_deflist_temp_variable:entry print_operand:entry
+EDGE generate_var_deflist_temp_variable:entry operand_temp:entry
+EDGE generate_var_deflist_temp_variable:entry assertion_handler.50:entry
+EDGE generate_var_deflist_temp_variable:entry insert_symbol:entry
+EDGE generate_var_deflist_temp_variable:entry get_symbol:entry
+EDGE generate_var_deflist_temp_variable:entry TEMP_VARIABLE:entry
+EDGE generate_var_deflist_temp_variable:entry operand_literal_nil:entry
+EDGE init_mangle_buf:entry libc_allocator.95:entry
+EDGE init_mangle_buf:entry scratch_allocator.94:entry
+EDGE init_mangle_buf:entry scratch_allocator_new_buffer.96:entry
+EDGE scratch_allocator_new_buffer.96:entry scratch_buffer_append.25:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU initialize_allocator:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU delete_allocator:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU alloc_non_zeroed:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU alloc_non_zeroed_temp:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU libc_alloc_proc:entry+libc_free_proc:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU construct_node_Getter:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU construct_node_Setter:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU construct_node_Method:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU construct_node_Program:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU init_scope_stack:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU init_symbol_table:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU delete_scope_stack:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU delete_symbol_table:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU insert_symbol:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU generate:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU da_elem_at.259:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU node_array_init.242:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU node_array_append.243:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU node_array_delete.246:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU parser_error_handler:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU scanner_set_hint:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU next_token:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU token_type_string:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU peek_token:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU parse_block:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU eat_token:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU make_node_Ident.286:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU da_init.362:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU da_delete.350:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU assertion_handler.355:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU reader_advance:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU g_allocator:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU g_getter_table:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU g_setter_table:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU g_function_table:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU g_builtin_function_table:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU g_scope_stack:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU sem_check:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU slice_elem_at.450:entry
+EDGE main:entry+parse:entry+semantic_check:entry+init_scanner:entry+parse_prolog:entry+parse_skelet:entry+free_parser:entry+IFJ25_BU check_expr:entry
+EDGE scratch_buffer_init.232:entry+sb_init.237:entry+scope_stack_buffer_init.247:entry da_init.264:entry
+EDGE scratch_buffer_append.233:entry+scratch_buffer_appendv.234:entry+sb_append.238:entry+sb_appendv.239:entry+node_array_appendv.24 da_append_base.262:entry
+EDGE da_append_base.262:entry da_grow_cap.263:entry
+EDGE scratch_buffer_elem_at.235:entry+sb_elem_at.240:entry+scope_stack_buffer_elem_at.250:entry+operator_stack_elem_at:entry+operand da_elem_at.259:entry
+EDGE da_elem_at.259:entry assertion_handler.257:entry
+EDGE scratch_buffer_delete.236:entry+sb_delete.241:entry+scope_stack_buffer_delete.251:entry da_delete.252:entry
+EDGE da_delete.252:entry assertion_handler.257:entry
+EDGE node_array_init.242:entry da_init.264:entry
+EDGE node_array_append.243:entry da_append_base.262:entry
+EDGE node_array_delete.246:entry da_delete.252:entry
+EDGE operator_stack_init:entry+operand_stack_init:entry da_init.264:entry
+EDGE operator_stack_append:entry+operand_stack_append:entry da_append_base.262:entry
+EDGE operator_stack_delete:entry+operand_stack_delete:entry da_delete.252:entry
+EDGE next_token:entry scanner_fetch_next_token:entry
+EDGE token_type_string:entry assertion_handler.257:entry
+EDGE peek_token:entry scanner_fetch_next_token:entry
+EDGE peek_token:entry reader_start_recording:entry+reader_stop_recording:entry
+EDGE parse_block:entry construct_node_Block_Stmt:entry
+EDGE parse_block:entry construct_node_Return_Stmt:entry
+EDGE parse_block:entry construct_node_Literal:entry
+EDGE parse_block:entry node_array_init.242:entry
+EDGE parse_block:entry node_array_append.243:entry
+EDGE parse_block:entry node_array_delete.246:entry
+EDGE parse_block:entry parser_error_handler:entry
+EDGE parse_block:entry scanner_set_hint:entry
+EDGE parse_block:entry next_token:entry
+EDGE parse_block:entry token_type_string:entry
+EDGE parse_block:entry peek_token:entry
+EDGE parse_block:entry parse_command_list:entry
+EDGE parse_block:entry parse_expr:entry
+EDGE eat_token:entry next_token:entry
+EDGE make_node_Ident.286:entry make_node:entry
+EDGE parse_command_list:entry node_array_append.243:entry
+EDGE parse_command_list:entry parser_error_handler:entry
+EDGE parse_command_list:entry scanner_set_hint:entry
+EDGE parse_command_list:entry next_token:entry
+EDGE parse_command_list:entry token_type_string:entry
+EDGE parse_command_list:entry peek_token:entry
+EDGE parse_command_list:entry parse_block:entry
+EDGE parse_command_list:entry parse_command:entry
+EDGE parse_expr:entry parse_binary_expr:entry
+EDGE parse_command:entry parser_error_handler:entry
+EDGE parse_command:entry scanner_set_hint:entry
+EDGE parse_command:entry token_type_string:entry
+EDGE parse_command:entry peek_token:entry
+EDGE parse_command:entry eat_token:entry
+EDGE parse_command:entry make_node_Ident.286:entry
+EDGE parse_command:entry parse_call_expr:entry
+EDGE parse_command:entry parse_builtin_call_expr:entry
+EDGE parse_command:entry parse_local_var_decl:entry
+EDGE parse_command:entry parse_assignment:entry
+EDGE parse_command:entry parse_if_stmt:entry
+EDGE parse_command:entry parse_while_stmt:entry
+EDGE parse_command:entry parse_return_stmt:entry
+EDGE parse_binary_expr:entry construct_node_Binary_Expr:entry
+EDGE parse_binary_expr:entry operator_stack_init:entry+operand_stack_init:entry
+EDGE parse_binary_expr:entry operator_stack_append:entry+operand_stack_append:entry
+EDGE parse_binary_expr:entry operator_stack_delete:entry+operand_stack_delete:entry
+EDGE parse_binary_expr:entry parser_error_handler:entry
+EDGE parse_binary_expr:entry scanner_set_hint:entry
+EDGE parse_binary_expr:entry token_type_string:entry
+EDGE parse_binary_expr:entry peek_token:entry
+EDGE parse_binary_expr:entry eat_token:entry
+EDGE parse_binary_expr:entry parse_base_expr:entry
+EDGE parse_binary_expr:entry operator_stack_last:entry+operand_stack_last:entry
+EDGE parse_binary_expr:entry ruleset:entry
+EDGE parse_binary_expr:entry operator_stack_pop:entry+operand_stack_pop:entry
+EDGE parse_base_expr:entry parser_error_handler:entry
+EDGE parse_base_expr:entry next_token:entry
+EDGE parse_base_expr:entry token_type_string:entry
+EDGE parse_base_expr:entry peek_token:entry
+EDGE parse_base_expr:entry eat_token:entry
+EDGE parse_base_expr:entry make_node_Ident.286:entry
+EDGE parse_base_expr:entry parse_expr:entry
+EDGE parse_base_expr:entry parse_call_expr:entry
+EDGE parse_base_expr:entry parse_builtin_call_expr:entry
+EDGE parse_base_expr:entry parse_term:entry
+EDGE operator_stack_last:entry+operand_stack_last:entry stack_last:entry
+EDGE ruleset:entry rule_index:entry+ruleset.precedence_table:entry
+EDGE operator_stack_pop:entry+operand_stack_pop:entry stack_pop:entry
+EDGE parse_call_expr:entry construct_node_Call_Expr:entry
+EDGE parse_call_expr:entry node_array_init.242:entry
+EDGE parse_call_expr:entry node_array_delete.246:entry
+EDGE parse_call_expr:entry parse_call_expr_base:entry
+EDGE parse_builtin_call_expr:entry construct_node_Builtin_Call_Expr:entry
+EDGE parse_builtin_call_expr:entry node_array_init.242:entry
+EDGE parse_builtin_call_expr:entry node_array_delete.246:entry
+EDGE parse_builtin_call_expr:entry parser_error_handler:entry
+EDGE parse_builtin_call_expr:entry next_token:entry
+EDGE parse_builtin_call_expr:entry token_type_string:entry
+EDGE parse_builtin_call_expr:entry peek_token:entry
+EDGE parse_builtin_call_expr:entry eat_token:entry
+EDGE parse_builtin_call_expr:entry parse_call_expr_base:entry
+EDGE parse_term:entry construct_node_Literal:entry
+EDGE parse_term:entry assertion_handler.257:entry
+EDGE parse_term:entry parser_error_handler:entry
+EDGE parse_term:entry token_type_string:entry
+EDGE parse_term:entry peek_token:entry
+EDGE parse_term:entry eat_token:entry
+EDGE parse_term:entry make_node_Ident.286:entry
+EDGE parse_term:entry tok_is_literal:entry+tok_is_ident:entry
+EDGE stack_last:entry da_elem_at.259:entry
+EDGE stack_pop:entry assertion_handler.257:entry
+EDGE parse_call_expr_base:entry node_array_append.243:entry
+EDGE parse_call_expr_base:entry parser_error_handler:entry
+EDGE parse_call_expr_base:entry next_token:entry
+EDGE parse_call_expr_base:entry token_type_string:entry
+EDGE parse_call_expr_base:entry peek_token:entry
+EDGE parse_call_expr_base:entry eat_token:entry
+EDGE parse_call_expr_base:entry parse_expr:entry
+EDGE parse_local_var_decl:entry construct_node_Var_Decl:entry
+EDGE parse_local_var_decl:entry parser_error_handler:entry
+EDGE parse_local_var_decl:entry scanner_set_hint:entry
+EDGE parse_local_var_decl:entry next_token:entry
+EDGE parse_local_var_decl:entry token_type_string:entry
+EDGE parse_local_var_decl:entry peek_token:entry
+EDGE parse_local_var_decl:entry eat_token:entry
+EDGE parse_local_var_decl:entry parse_expr:entry
+EDGE parse_assignment:entry construct_node_Assign_Stmt:entry
+EDGE parse_assignment:entry parser_error_handler:entry
+EDGE parse_assignment:entry next_token:entry
+EDGE parse_assignment:entry token_type_string:entry
+EDGE parse_assignment:entry parse_expr:entry
+EDGE parse_if_stmt:entry construct_node_If_Stmt:entry
+EDGE parse_if_stmt:entry parser_error_handler:entry
+EDGE parse_if_stmt:entry scanner_set_hint:entry
+EDGE parse_if_stmt:entry next_token:entry
+EDGE parse_if_stmt:entry token_type_string:entry
+EDGE parse_if_stmt:entry peek_token:entry
+EDGE parse_if_stmt:entry parse_block:entry
+EDGE parse_if_stmt:entry parse_expr:entry
+EDGE parse_while_stmt:entry construct_node_While_Stmt:entry
+EDGE parse_while_stmt:entry parser_error_handler:entry
+EDGE parse_while_stmt:entry scanner_set_hint:entry
+EDGE parse_while_stmt:entry next_token:entry
+EDGE parse_while_stmt:entry token_type_string:entry
+EDGE parse_while_stmt:entry peek_token:entry
+EDGE parse_while_stmt:entry parse_block:entry
+EDGE parse_while_stmt:entry parse_expr:entry
+EDGE parse_return_stmt:entry construct_node_Return_Stmt:entry
+EDGE parse_return_stmt:entry parser_error_handler:entry
+EDGE parse_return_stmt:entry scanner_set_hint:entry
+EDGE parse_return_stmt:entry next_token:entry
+EDGE parse_return_stmt:entry token_type_string:entry
+EDGE parse_return_stmt:entry peek_token:entry
+EDGE parse_return_stmt:entry parse_expr:entry
+EDGE scratch_buffer_init.340:entry da_init.362:entry
+EDGE scratch_buffer_append.341:entry+scratch_buffer_appendv.342:entry+sb_appendv.347:entry da_append_base.360:entry
+EDGE da_append_base.360:entry da_grow_cap.361:entry
+EDGE scratch_buffer_elem_at.343:entry da_elem_at.357:entry
+EDGE da_elem_at.357:entry assertion_handler.355:entry
+EDGE scratch_buffer_delete.344:entry da_delete.350:entry
+EDGE da_delete.350:entry assertion_handler.355:entry
+EDGE sb_append.346:entry da_append_base.360:entry
+EDGE sb_elem_at.348:entry da_elem_at.357:entry
+EDGE reader_advance:entry sb_append.346:entry
+EDGE reader_advance:entry sb_elem_at.348:entry
+EDGE scanner_fetch_next_token:entry alloc:entry
+EDGE scanner_fetch_next_token:entry assertion_handler.355:entry
+EDGE scanner_fetch_next_token:entry scanner_buffer_reset:entry+scanner_peek_char:entry
+EDGE scanner_fetch_next_token:entry prepare_token:entry+str_view_init.378:entry
+EDGE scanner_fetch_next_token:entry scanner_next_char:entry
+EDGE scanner_fetch_next_token:entry scanner_buffer_append:entry
+EDGE scanner_fetch_next_token:entry scanner_convert_whitespace:entry
+EDGE scanner_fetch_next_token:entry check_for_escape:entry
+EDGE scanner_fetch_next_token:entry check_for_keyword:entry
+EDGE scanner_next_char:entry reader_advance:entry
+EDGE scanner_buffer_append:entry sb_append.346:entry
+EDGE scanner_convert_whitespace:entry scanner_next_char:entry
+EDGE scanner_convert_whitespace:entry scanner_buffer_append:entry
+EDGE check_for_escape:entry ESCAPECHARS:entry
+EDGE check_for_keyword:entry alloc:entry
+EDGE check_for_keyword:entry prepare_token:entry+str_view_init.378:entry
+EDGE check_for_keyword:entry KEYWORDS:entry+str_view_cmp.379:entry
+EDGE scratch_buffer_init.400:entry+sb_init.405:entry+node_array_init.410:entry+scope_stack_buffer_init.415:entry da_init.432:entry
+EDGE scratch_buffer_append.401:entry+scratch_buffer_appendv.402:entry+sb_append.406:entry+sb_appendv.407:entry+node_array_append.411 da_append_base.430:entry
+EDGE da_append_base.430:entry da_grow_cap.431:entry
+EDGE scratch_buffer_elem_at.403:entry+sb_elem_at.408:entry+node_array_elem_at.413:entry+scope_stack_buffer_elem_at.418:entry da_elem_at.427:entry
+EDGE da_elem_at.427:entry assertion_handler.425:entry
+EDGE scratch_buffer_delete.404:entry+sb_delete.409:entry+node_array_delete.414:entry+scope_stack_buffer_delete.419:entry+func_group_ assertion_handler.425:entry
+EDGE func_group_init:entry da_init.432:entry
+EDGE func_group_append:entry da_append_base.430:entry
+EDGE func_group_elem_at:entry da_elem_at.427:entry
+EDGE sem_check:entry begin_scope:entry
+EDGE sem_check:entry end_scope:entry
+EDGE sem_check:entry insert_symbol:entry
+EDGE sem_check:entry get_symbol:entry
+EDGE sem_check:entry func_group_elem_at:entry
+EDGE sem_check:entry assertion_handler.425:entry
+EDGE sem_check:entry g_setter_table:entry
+EDGE sem_check:entry g_function_table:entry
+EDGE sem_check:entry g_scope_stack:entry
+EDGE sem_check:entry slice_elem_at.450:entry
+EDGE sem_check:entry check_expr:entry
+EDGE sem_check:entry insert_global_symbol:entry
+EDGE sem_check:entry check_inside_block:entry
+EDGE slice_elem_at.450:entry assertion_handler.425:entry
+EDGE check_expr:entry get_symbol:entry
+EDGE check_expr:entry assertion_handler.425:entry
+EDGE check_expr:entry g_getter_table:entry
+EDGE check_expr:entry g_function_table:entry
+EDGE check_expr:entry g_builtin_function_table:entry
+EDGE check_expr:entry g_scope_stack:entry
+EDGE check_expr:entry slice_elem_at.450:entry
+EDGE check_expr:entry get_func_symbol:entry
+EDGE check_expr:entry str_view_cmp.454:entry+check_builtin:entry
+EDGE check_expr:entry check_binary_expr:entry
+EDGE insert_global_symbol:entry alloc:entry
+EDGE insert_global_symbol:entry insert_symbol:entry
+EDGE insert_global_symbol:entry get_symbol:entry
+EDGE insert_global_symbol:entry func_group_init:entry
+EDGE insert_global_symbol:entry func_group_append:entry
+EDGE insert_global_symbol:entry assertion_handler.425:entry
+EDGE insert_global_symbol:entry g_allocator:entry
+EDGE insert_global_symbol:entry g_getter_table:entry
+EDGE insert_global_symbol:entry g_setter_table:entry
+EDGE insert_global_symbol:entry g_function_table:entry
+EDGE insert_global_symbol:entry get_func_symbol:entry
+EDGE check_inside_block:entry sem_check:entry
+EDGE check_inside_block:entry slice_elem_at.450:entry
+EDGE get_func_symbol:entry func_group_elem_at:entry
+EDGE check_binary_expr:entry assertion_handler.425:entry
+EDGE check_binary_expr:entry check_expr:entry
+EDGE scratch_buffer_elem_at.462:entry+da_elem_at.471:entry+scratch_buffer_delete.463:entry+da_delete.464:entry assertion_handler.469:entry
+EDGE grow:entry insert_symbol:entry
+EDGE grow:entry SYMBOL_TABLE_GROUP_EMPTIES:entry
+EDGE hash_function:entry hash_djb:entry
